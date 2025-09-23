@@ -1,24 +1,39 @@
-'use client';
+// app/page.js
+"use client";
 
-import { useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function HomeRedirect() {
-  const { status } = useSession();
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+// --- Componente hijo que usa useSearchParams ---
+function HomeInner() {
+  const { status, data: session } = useSession();
   const router = useRouter();
   const sp = useSearchParams();
-  const cb = sp?.get('callbackUrl'); // por si vienen desde middleware
+
+  const callbackUrl = useMemo(() => sp.get("callbackUrl") || "/explore", [sp]);
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (status === 'authenticated') {
-      router.replace('/explore'); // o '/feed' si tienes un feed
+    if (status === "loading") return;
+
+    if (status === "authenticated") {
+      router.replace("/explore");
     } else {
-      const target = cb || '/';
-      router.replace(`/auth/login?callbackUrl=${encodeURIComponent(target)}`);
+      router.replace(`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     }
-  }, [status, router, cb]);
+  }, [status, session, router, callbackUrl]);
 
   return null;
+}
+
+// --- Página raíz con Suspense como padre ---
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="p-6">Cargando…</div>}>
+      <HomeInner />
+    </Suspense>
+  );
 }
