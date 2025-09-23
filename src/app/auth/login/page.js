@@ -1,13 +1,25 @@
+// src/app/auth/login/page.js
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n';
 import PublicHighlights from '@/app/components/PublicHighlights';
 
+// evita prerender estático (corrige el error en Vercel)
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-gray-900 text-gray-200">Cargando…</div>}>
+      <LoginInner />
+    </Suspense>
+  );
+}
+
+function LoginInner() {
   const { data: session, status } = useSession();
   const { t } = useLanguage();
   const router = useRouter();
