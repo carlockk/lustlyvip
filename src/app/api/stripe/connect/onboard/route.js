@@ -22,12 +22,11 @@ export async function POST(req) {
 
     const stripe = getStripe();
 
-    // 1) Crear o reutilizar la cuenta de Connect (Express) con capabilities pedidas
+    // Crear o reutilizar cuenta Express y pedir capabilities necesarias
     let accountId = user?.stripeConnectId;
     if (!accountId) {
       const account = await stripe.accounts.create({
         type: 'express',
-        // Pide capabilities para que Onboarding habilite lo necesario
         capabilities: {
           transfers: { requested: true },
           card_payments: { requested: true },
@@ -36,14 +35,12 @@ export async function POST(req) {
         email: user?.email || undefined,
         business_type: 'individual',
       });
-
       accountId = account.id;
       await User.updateOne({ _id: userId }, { $set: { stripeConnectId: accountId } });
     }
 
-    // 2) Link de onboarding (o actualización) de la cuenta
     const origin = new URL(req.url).origin;
-    const returnUrl = `${origin}/monetization`; // más lógico para tu flujo que /profile
+    const returnUrl = `${origin}/monetization`;
     const refreshUrl = `${origin}/monetization`;
 
     const accountLink = await stripe.accountLinks.create({

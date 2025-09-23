@@ -34,6 +34,9 @@ export default function MonetizationPage() {
     error: null,
   });
 
+  // ventas on/off
+  const [monetizationEnabled, setMonetizationEnabled] = useState(true);
+
   // ayuda móvil
   const [showHelp, setShowHelp] = useState(false);
 
@@ -65,19 +68,38 @@ export default function MonetizationPage() {
         const j = await cs.json();
         if (cs.ok) setConnect((c) => ({ ...c, ...j }));
       } catch {}
+      try {
+        const st = await fetch("/api/creators/monetization/toggle");
+        const sj = await st.json();
+        if (st.ok && "monetizationEnabled" in sj) {
+          setMonetizationEnabled(!!sj.monetizationEnabled);
+        }
+      } catch {}
     })();
   }, []);
 
-  // ───────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────
   // Actions
-  // ───────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────
   async function handleConnect() {
     try {
       setConnect((c) => ({ ...c, loading: true, error: null }));
       const r = await fetch("/api/stripe/connect/onboard", { method: "POST" });
       const j = await r.json();
       if (!r.ok) throw new Error(j.message || "Error");
-      window.location.href = j.url; // Stripe onboarding
+      window.location.href = j.url;
+    } catch (e) {
+      setConnect((c) => ({ ...c, loading: false, error: e.message }));
+    }
+  }
+
+  async function openStripeDashboard() {
+    try {
+      setConnect((c) => ({ ...c, loading: true, error: null }));
+      const r = await fetch("/api/stripe/connect/login-link", { method: "POST" });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.message || "Error");
+      window.location.href = j.url;
     } catch (e) {
       setConnect((c) => ({ ...c, loading: false, error: e.message }));
     }
@@ -106,7 +128,49 @@ export default function MonetizationPage() {
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.url)
         throw new Error((data && data.message) || t("openStripePortal"));
-      window.location.href = data.url; // Stripe customer portal
+      window.location.href = data.url;
+    } catch (e) {
+      setConnect((c) => ({ ...c, loading: false, error: e.message }));
+    }
+  }
+
+  async function toggleSales() {
+    try {
+      const next = !monetizationEnabled;
+      const r = await fetch("/api/creators/monetization/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enabled: next }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.message || "Error");
+      setMonetizationEnabled(!!j.monetizationEnabled);
+      setMessage(next ? (t("resumed") || "Ventas reanudadas") : (t("paused") || "Ventas pausadas"));
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }
+
+  async function disconnectStripe() {
+    const ok = confirm(
+      t("disconnectConfirm") ||
+        "Esto desconectará tu cuenta de Stripe y pausará las ventas. Asegúrate de cancelar suscripciones activas. ¿Continuar?"
+    );
+    if (!ok) return;
+    try {
+      setConnect((c) => ({ ...c, loading: true, error: null }));
+      const r = await fetch("/api/stripe/connect/disconnect", { method: "POST" });
+      const j = await r.json().catch(() => null);
+      if (!r.ok) throw new Error((j && j.message) || "Error");
+      setConnect({
+        connected: false,
+        chargesEnabled: false,
+        accountId: null,
+        loading: false,
+        error: null,
+      });
+      setMonetizationEnabled(false);
+      setMessage(t("disconnected") || "Stripe desconectado");
     } catch (e) {
       setConnect((c) => ({ ...c, loading: false, error: e.message }));
     }
@@ -121,7 +185,6 @@ export default function MonetizationPage() {
         currency.toLowerCase() === "clp"
           ? parseInt(amount, 10)
           : Math.round(parseFloat(amount || "0") * 100);
-
       if (!Number.isFinite(cents) || cents <= 0)
         throw new Error(t("invalidAmount") || "Monto inválido");
 
@@ -181,11 +244,10 @@ export default function MonetizationPage() {
     }
   }
 
-  // ───────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────
   // UI
-  // ───────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────
   return (
-    // Aplica `inert` cuando el modal está abierto para impedir foco detrás
     <div className="max-w-md mx-auto p-6" {...(showHelp ? { inert: "" } : {})}>
       <h1 className="text-2xl font-bold mb-2">
         {t("monetizationTitle") || "Monetización"}
@@ -195,7 +257,7 @@ export default function MonetizationPage() {
           "Configura tus suscripciones y descuentos introductorios."}
       </p>
 
-      {/* Stripe Connect + Portal (ambos botones) */}
+      {/* Stripe Connect + Acciones */}
       <div className="mb-6 p-4 border border-gray-700 rounded bg-gray-800">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -215,25 +277,62 @@ export default function MonetizationPage() {
                 {t("account") || "Cuenta"}: {connect.accountId}
               </div>
             )}
+            {!monetizationEnabled && (
+              <div className="text-xs text-amber-400 mt-1">
+                {t("salesPaused") || "Tus ventas están pausadas."}
+              </div>
+            )}
           </div>
 
-          {/* Botones (desktop con tooltip, mobile sin hover) */}
           <div className="flex flex-col items-end gap-2">
-            <div className="relative group">
-              {!connect.connected ? (
+            {!connect.connected ? (
+              <button
+                onClick={handleConnect}
+                className={`px-3 py-2 rounded ${
+                  connect.loading ? "bg-gray-600" : "bg-pink-600 hover:bg-pink-700"
+                }`}
+              >
+                {connect.loading
+                  ? t("opening") || "Abriendo…"
+                  : t("connectStripe") || "Conectar pagos (Stripe)"}
+              </button>
+            ) : (
+              <>
                 <button
-                  onClick={handleConnect}
+                  onClick={openStripeDashboard}
                   className={`px-3 py-2 rounded ${
                     connect.loading
                       ? "bg-gray-600"
-                      : "bg-pink-600 hover:bg-pink-700"
+                      : "bg-gray-700 hover:bg-gray-600"
                   }`}
                 >
-                  {connect.loading
-                    ? t("opening") || "Abriendo…"
-                    : t("connectStripe") || "Conectar pagos (Stripe)"}
+                  {t("openStripeDashboard") || "Abrir panel de Stripe"}
                 </button>
-              ) : (
+
+                <button
+                  onClick={toggleSales}
+                  className={`px-3 py-2 rounded ${
+                    monetizationEnabled
+                      ? "bg-amber-600 hover:bg-amber-700"
+                      : "bg-green-600 hover:bg-green-700"
+                  }`}
+                >
+                  {monetizationEnabled
+                    ? t("pauseSales") || "Pausar ventas"
+                    : t("resumeSales") || "Reanudar ventas"}
+                </button>
+
+                <button
+                  onClick={disconnectStripe}
+                  className={`px-3 py-2 rounded ${
+                    connect.loading
+                      ? "bg-gray-600"
+                      : "bg-red-600 hover:bg-red-700"
+                  }`}
+                >
+                  {t("disconnectStripe") || "Desconectar Stripe"}
+                </button>
+
                 <button
                   onClick={refreshConnectStatus}
                   className={`px-3 py-2 rounded ${
@@ -244,33 +343,18 @@ export default function MonetizationPage() {
                 >
                   {t("checkStatus") || "Revisar estado"}
                 </button>
-              )}
+              </>
+            )}
 
-              {/* Tooltip desktop */}
-              <div className="hidden md:block absolute -top-16 right-0 w-72 bg-black/90 text-xs text-gray-200 p-2 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
-                {t("connectStripeHelp") ||
-                  "Crea o vincula tu cuenta de Stripe para recibir pagos en tu banco. Es obligatorio para cobrar suscripciones y PPV."}
-              </div>
-            </div>
-
-            <div className="relative group">
-              <button
-                onClick={openPortal}
-                className={`px-3 py-2 rounded ${
-                  connect.loading
-                    ? "bg-gray-600"
-                    : "bg-gray-700 hover:bg-gray-600"
-                }`}
-              >
-                {t("openPaymentPortal") || "Añadir tarjeta / Portal"}
-              </button>
-
-              {/* Tooltip desktop */}
-              <div className="hidden md:block absolute -top-16 right-0 w-72 bg-black/90 text-xs text-gray-200 p-2 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
-                {t("addCardHelp") ||
-                  "Abre el portal de Stripe para agregar y gestionar tus métodos de pago (como comprador)."}
-              </div>
-            </div>
+            {/* Portal (métodos de pago como comprador) */}
+            <button
+              onClick={openPortal}
+              className={`px-3 py-2 rounded ${
+                connect.loading ? "bg-gray-600" : "bg-gray-700 hover:bg-gray-600"
+              }`}
+            >
+              {t("openPaymentPortal") || "Añadir tarjeta / Portal"}
+            </button>
           </div>
         </div>
 
@@ -295,7 +379,7 @@ export default function MonetizationPage() {
           <label className="block text-sm text-gray-300 mb-1">
             {t("monthlyPrice") || "Precio mensual"}
           </label>
-        <input
+          <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="9.99"
@@ -432,7 +516,7 @@ export default function MonetizationPage() {
             </h3>
             <p className="text-sm text-gray-300">
               {t("whatIsConnectStripeBody") ||
-                "Es el proceso para crear o vincular tu cuenta de Stripe y poder recibir pagos en tu banco. Stripe te pedirá datos personales y bancarios. Sin completarlo, no podrás cobrar suscripciones ni PPV."}
+                "Crea o vincula tu cuenta de Stripe para recibir pagos en tu banco. Es obligatorio para cobrar suscripciones y PPV."}
             </p>
 
             <h3 className="text-lg font-semibold mt-4 mb-2">
@@ -440,7 +524,7 @@ export default function MonetizationPage() {
             </h3>
             <p className="text-sm text-gray-300">
               {t("whatIsAddCardBody") ||
-                "Abre el portal de Stripe para agregar y gestionar tus métodos de pago como comprador. Útil si también compras contenido."}
+                "Abre el portal de Stripe para agregar y gestionar tus métodos de pago como comprador."}
             </p>
 
             <button
