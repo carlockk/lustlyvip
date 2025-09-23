@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Cursores para elementos interactivos */
+button, [role="button"] {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+a {
+  cursor: pointer;
+}
+
+/* Tema claro: overrides para clases más usadas en la UI actual */
+[data-theme="light"] body {
+  --background: #f7f8fc;
+  --foreground: #111827;
+}
+
+/* Superficies */
+[data-theme="light"] .bg-gray-900 { background-color: #f7f8fc !important; }
+[data-theme="light"] .bg-gray-800 { background-color: #ffffff !important; }
+[data-theme="light"] .bg-gray-700 { background-color: #f1f5f9 !important; }
+[data-theme="light"] .bg-gray-600 { background-color: #e5e7eb !important; }
+
+/* Bordes */
+[data-theme="light"] .border-gray-800, 
+[data-theme="light"] .border-gray-700 { border-color: #e5e7eb !important; }
+
+/* Texto */
+[data-theme="light"] .text-gray-100 { color: #111827 !important; }
+[data-theme="light"] .text-gray-200 { color: #1f2937 !important; }
+[data-theme="light"] .text-gray-300 { color: #374151 !important; }
+[data-theme="light"] .text-gray-400 { color: #4b5563 !important; }
+[data-theme="light"] .text-gray-500 { color: #6b7280 !important; }
+
+/* Hover states */
+[data-theme="light"] .hover\:bg-gray-700:hover { background-color: #f3f4f6 !important; }
+[data-theme="light"] .hover\:bg-gray-600:hover { background-color: #e5e7eb !important; }
+[data-theme="light"] .hover\:text-gray-200:hover { color: #111827 !important; }
+
+/* Barras translúcidas */
+[data-theme="light"] .bg-gray-900\/80 { background-color: rgba(247,248,252,0.8) !important; }
+[data-theme="light"] .bg-gray-900\/70 { background-color: rgba(247,248,252,0.7) !important; }
+
+/* Invertir logo en modo claro (solo útil si el logo es monocromático claro) */
+[data-theme="light"] img.app-logo {
+  filter: invert(1);
+}
+
+/* Botones primarios en modo claro (color #3ca9b2) */
+[data-theme="light"] .bg-pink-600 {
+  background-color: #3ca9b2 !important;
+  color: #ffffff !important;
+}
+[data-theme="light"] .hover\:bg-pink-700:hover {
+  background-color: #2f8c94 !important;
+  color: #ffffff !important;
+}
+[data-theme="light"] .focus\:ring-pink-500:focus { --tw-ring-color: #3ca9b2 !important; }
+
+/* Forzar panel deslizante de sugerencias en oscuro */
+[data-theme="light"] .panel-dark { background-color: #111827 !important; color: #e5e7eb !important; }
+[data-theme="light"] .panel-dark .bg-gray-800 { background-color: #1f2937 !important; }
+[data-theme="light"] .panel-dark .border-gray-700 { border-color: #374151 !important; }
+[data-theme="light"] .panel-dark .text-gray-100 { color: #f3f4f6 !important; }
+[data-theme="light"] .panel-dark .text-gray-200 { color: #e5e7eb !important; }
+[data-theme="light"] .panel-dark .text-gray-300 { color: #d1d5db !important; }
+[data-theme="light"] .panel-dark .text-gray-400 { color: #9ca3af !important; }
+[data-theme="light"] .panel-dark .hover\:bg-gray-800:hover { background-color: #1f2937 !important; }
+
+/* Virtualización ligera: reduce coste de render fuera de viewport */
+.cv-auto { content-visibility: auto; contain-intrinsic-size: 800px; }
