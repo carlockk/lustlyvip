@@ -185,7 +185,8 @@ export default function MonetizationPage() {
   // UI
   // ───────────────────────────────────────────────────────────
   return (
-    <div className="max-w-md mx-auto p-6">
+    // Aplica `inert` cuando el modal está abierto para impedir foco detrás
+    <div className="max-w-md mx-auto p-6" {...(showHelp ? { inert: "" } : {})}>
       <h1 className="text-2xl font-bold mb-2">
         {t("monetizationTitle") || "Monetización"}
       </h1>
@@ -194,7 +195,7 @@ export default function MonetizationPage() {
           "Configura tus suscripciones y descuentos introductorios."}
       </p>
 
-      {/* Stripe Connect + Portal (ambos botones para el creador) */}
+      {/* Stripe Connect + Portal (ambos botones) */}
       <div className="mb-6 p-4 border border-gray-700 rounded bg-gray-800">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
@@ -277,8 +278,7 @@ export default function MonetizationPage() {
           <div className="text-xs text-red-400 mt-2">{connect.error}</div>
         )}
         <div className="text-xs text-gray-500 mt-2">
-          {t("platformFeeNote") ||
-            "Tu comisión de plataforma actual es 3%."}
+          {t("platformFeeNote") || "Tu comisión de plataforma actual es 3%."}
         </div>
       </div>
 
@@ -295,7 +295,7 @@ export default function MonetizationPage() {
           <label className="block text-sm text-gray-300 mb-1">
             {t("monthlyPrice") || "Precio mensual"}
           </label>
-          <input
+        <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="9.99"
@@ -372,8 +372,7 @@ export default function MonetizationPage() {
             </div>
             <div>
               <label className="block text-sm text-gray-300 mb-1">
-                {t("introDiscountOnce") ||
-                  "Descuento 1ª compra (%)"}
+                {t("introDiscountOnce") || "Descuento 1ª compra (%)"}
               </label>
               <input
                 value={plans[key].introPercent}
@@ -409,19 +408,25 @@ export default function MonetizationPage() {
       <button
         onClick={() => setShowHelp(true)}
         className="md:hidden fixed bottom-20 right-5 p-3 rounded-full bg-pink-600 shadow-lg"
-        aria-label="Ayuda"
+        aria-label={t("help") || "Ayuda"}
       >
         ?
       </button>
 
+      {/* Modal accesible */}
       {showHelp && (
         <div className="fixed inset-0 z-50">
           <div
             className="absolute inset-0 bg-black/60"
             onClick={() => setShowHelp(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 rounded-t-2xl p-5">
-            <h3 className="text-lg font-semibold mb-2">
+          <div
+            className="absolute bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 rounded-t-2xl p-5"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="help-title"
+          >
+            <h3 id="help-title" className="text-lg font-semibold mb-2">
               {t("whatIsConnectStripeTitle") ||
                 "¿Qué es “Conectar pagos (Stripe)”?"}
             </h3>
