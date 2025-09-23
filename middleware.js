@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 1) Rate limiter per-IP (simple, memoria). Para prod: Redis o similar.
+// 1) Rate limiter per-IP (simple, memoria). Para prod real: Redis/Upstash.
 // ───────────────────────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minuto
 const RATE_LIMIT_MAX = 60;           // req por ventana
@@ -17,18 +17,18 @@ function getClientIp(req) {
 
 function shouldRateLimit(pathname) {
   if (!pathname.startsWith('/api/')) return false;
-  // Bypass para Stripe webhook y auth de NextAuth
+  // Bypass para Stripe webhook, NextAuth y explore público
   if (pathname.startsWith('/api/stripe/webhook')) return false;
   if (pathname.startsWith('/api/auth/')) return false;
+  if (pathname.startsWith('/api/creators/explore')) return false;
   return true;
 }
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 2) Definición de rutas privadas
-//    Invitados podrán ver /profile/[id] y público (/, NO: aquí la raíz es privada).
+//    Invitados podrán ver: /explore y /profile/[id] (públicos).
 // ───────────────────────────────────────────────────────────────────────────────
 const PRIVATE_PREFIXES = [
-  '/',                // raíz privada -> a login
   '/feed',
   '/notifications',
   '/messages',
@@ -40,19 +40,16 @@ const PRIVATE_PREFIXES = [
   '/creator',
   '/me',
   '/settings',
-  '/posts',           // creación/edición de posts
-  '/api/me',          // APIs de usuario
+  '/posts',          // creación/edición de posts
+  '/api/me',         // APIs de usuario
 ];
 
-// Rutas que NUNCA protegemos (auth)
 function isAuthPath(pathname) {
   return pathname.startsWith('/auth/') || pathname.startsWith('/api/auth/');
 }
 
-// Permitir perfiles públicos: /profile/[id] y página índice /profile (tu perfil se protege por middleware de arriba, pero si quieres permitir /profile público, remueve '/profile' de PRIVATE_PREFIXES)
 function isPublicProfilePath(pathname) {
   if (!pathname.startsWith('/profile')) return false;
-  // /profile/<id> (público)
   const parts = pathname.split('/').filter(Boolean); // ['profile', 'id?']
   return parts.length === 2; // exactamente /profile/:id
 }
@@ -64,7 +61,12 @@ export async function middleware(req) {
   const url = new URL(req.url);
   const { pathname, search } = url;
 
-  // 3.1 Rate limit para /api/*
+  // 3.0 Redirigir raíz a /explore (pública)
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL('/explore', req.url));
+  }
+
+  // 3.1 Rate limit para /api/* (con bypass definidos)
   if (shouldRateLimit(pathname)) {
     const now = Date.now();
     const ip = getClientIp(req);
@@ -83,14 +85,15 @@ export async function middleware(req) {
     }
   }
 
-  // 3.2 Gate de autenticación para privadas (evita /auth/* y /api/auth/*)
+  // 3.2 Gate de autenticación
   const isAuth = isAuthPath(pathname);
   const isProfilePublic = isPublicProfilePath(pathname);
+  const isExplore = pathname.startsWith('/explore'); // público
 
-  // ¿Es privada?
   const isPrivate =
     !isAuth &&
     !isProfilePublic &&
+    !isExplore &&
     (
       PRIVATE_PREFIXES.includes(pathname) ||
       PRIVATE_PREFIXES.some(p => p !== '/' && pathname.startsWith(p + '/'))
@@ -107,7 +110,6 @@ export async function middleware(req) {
   // 3.3 Continuar y añadir headers de seguridad
   const res = NextResponse.next();
 
-  // CSP compatible con Next dev (HMR) y assets
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",
