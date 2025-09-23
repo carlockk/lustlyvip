@@ -16,12 +16,21 @@ export async function POST() {
     await dbConnect();
     const user = await User.findById(session.user.id).select('stripeConnectId').lean();
     if (!user?.stripeConnectId) {
-      return NextResponse.json({ message: 'No hay cuenta conectada' }, { status: 400 });
+      return NextResponse.json({ message: 'No hay cuenta Stripe conectada' }, { status: 400 });
     }
 
     const stripe = getStripe();
-    const link = await stripe.accounts.createLoginLink(user.stripeConnectId);
-    return NextResponse.json({ url: link.url });
+    try {
+      const link = await stripe.accounts.createLoginLink(user.stripeConnectId);
+      return NextResponse.json({ url: link.url });
+    } catch (err) {
+      console.error('stripe login-link error', err?.raw || err);
+      // Mensaje más explícito para debug:
+      return NextResponse.json({
+        message: err?.raw?.message || err?.message || 'Stripe rechazó el login link',
+        code: err?.raw?.code || null,
+      }, { status: 400 });
+    }
   } catch (e) {
     console.error('connect login-link error', e);
     return NextResponse.json({ message: 'Error creando login link' }, { status: 500 });
