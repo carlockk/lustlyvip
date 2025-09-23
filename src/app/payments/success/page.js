@@ -5,8 +5,6 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLanguage } from "@/lib/i18n";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
 
 function PaymentSuccessInner() {
   const router = useRouter();

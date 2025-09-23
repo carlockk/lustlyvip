@@ -1,8 +1,6 @@
 // src/app/posts/[id]/page.js
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import { useEffect, useState, useRef, useMemo, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';

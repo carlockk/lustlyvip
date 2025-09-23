@@ -8,8 +8,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n';
 import PublicHighlights from '@/app/components/PublicHighlights';
 
-// evita prerender estático (corrige el error en Vercel)
-export const dynamic = 'force-dynamic';
 
 export default function LoginPage() {
   return (

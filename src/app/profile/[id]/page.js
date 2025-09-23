@@ -1,20 +1,18 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+import { useEffect, useMemo, useState } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { FaPaperPlane } from 'react-icons/fa';
+import EditProfileModal from '../../components/EditProfileModal';
+import ConfirmDeleteAccountModal from '../../components/ConfirmDeleteAccountModal';
+import DatePicker from '../../components/DatePicker';
+import { useLanguage } from '@/lib/i18n';
 
-import { useEffect, useMemo, useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { FaPaperPlane } from "react-icons/fa";
-import EditProfileModal from "../../components/EditProfileModal"; // <-- verifica ruta
-import ConfirmDeleteAccountModal from "../../components/ConfirmDeleteAccountModal"; // <-- verifica ruta
-import DatePicker from "../../components/DatePicker"; // <-- si lo usas en otro lado
-import { useLanguage } from "@/lib/i18n";
-import PublicSuggestionsRail from "@/app/components/PublicSuggestionsRail";
-import SuggestionsRail from "@/app/components/SuggestionsRail";
-
+// ⬇️ Rails de sugerencias
+import PublicSuggestionsRail from '@/app/components/PublicSuggestionsRail';
+import SuggestionsRail from '@/app/components/SuggestionsRail';
 
 export default function UserProfilePage({ params }) {
   const { data: session, status, update } = useSession();
