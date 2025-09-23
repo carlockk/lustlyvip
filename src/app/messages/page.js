@@ -1,17 +1,31 @@
+// src/app/messages/page.js
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useMemo, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { FaPaperPlane } from 'react-icons/fa';
 import Link from 'next/link';
 import { useLanguage } from '@/lib/i18n';
 
+// evita que Next intente prerenderear estáticamente
+export const dynamic = 'force-dynamic';
+
 export default function MessagesPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-gray-200">Cargando…</div>}>
+      <MessagesInner />
+    </Suspense>
+  );
+}
+
+function MessagesInner() {
   const { data: session, status } = useSession();
   const { t } = useLanguage();
-  const searchParams = useSearchParams();
-  const initialUserId = searchParams.get('userId');
+  const sp = useSearchParams();
+
+  // <- ahora leemos los search params dentro del componente envuelto en Suspense
+  const initialUserId = useMemo(() => sp?.get('userId') || null, [sp]);
 
   const [conversations, setConversations] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -20,49 +34,58 @@ export default function MessagesPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let alive = true;
     const fetchConversations = async () => {
       if (status === 'authenticated') {
         try {
-          const res = await fetch(`/api/messages`);
+          const res = await fetch(`/api/messages`, { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to fetch conversations');
           const data = await res.json();
-          setConversations(data.conversations);
+          if (!alive) return;
+          setConversations(data.conversations || []);
+
           if (initialUserId) {
-            const userToSelect = data.conversations.find((conv) => conv.otherUser._id === initialUserId);
-            if (userToSelect) {
-              setSelectedUser(userToSelect.otherUser);
+            const byConv = data.conversations?.find(
+              (c) => c.otherUser?._id === initialUserId
+            );
+            if (byConv) {
+              setSelectedUser(byConv.otherUser);
             } else {
-              const profileRes = await fetch(`/api/users/${initialUserId}`);
+              const profileRes = await fetch(`/api/users/${initialUserId}`, { cache: 'no-store' });
               if (profileRes.ok) {
                 const profileData = await profileRes.json();
-                setSelectedUser(profileData.user);
+                if (alive) setSelectedUser(profileData.user || null);
               }
             }
           }
           setIsLoading(false);
         } catch (error) {
           console.error('Error fetching conversations:', error);
-          setIsLoading(false);
+          if (alive) setIsLoading(false);
         }
       }
     };
     fetchConversations();
+    return () => { alive = false; };
   }, [status, initialUserId]);
 
   useEffect(() => {
+    let alive = true;
     if (selectedUser) {
-      const fetchMessages = async () => {
+      (async () => {
         try {
-          const res = await fetch(`/api/messages?userId=${selectedUser._id}`);
+          const res = await fetch(`/api/messages?userId=${selectedUser._id}`, { cache: 'no-store' });
           if (!res.ok) throw new Error('Failed to fetch messages');
           const data = await res.json();
-          setMessages(data.messages);
+          if (alive) setMessages(data.messages || []);
         } catch (error) {
           console.error('Error fetching messages:', error);
         }
-      };
-      fetchMessages();
+      })();
+    } else {
+      setMessages([]);
     }
+    return () => { alive = false; };
   }, [selectedUser]);
 
   const handleSendMessage = async (e) => {
@@ -76,7 +99,7 @@ export default function MessagesPage() {
       });
       if (!res.ok) throw new Error('Failed to send message');
       const sentMessage = await res.json();
-      setMessages((prevMessages) => [...prevMessages, sentMessage.message]);
+      setMessages((prev) => [...prev, sentMessage.message]);
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -93,10 +116,11 @@ export default function MessagesPage() {
 
   return (
     <div className="flex h-full bg-gray-900 text-white">
+      {/* Lista de conversaciones */}
       <div className="w-1/4 bg-gray-800 p-4 border-r border-gray-700">
         <h2 className="text-xl font-bold mb-4">{t('messagesTitleFull')}</h2>
         <div className="space-y-2">
-          {conversations.length > 0 ? (
+          {conversations?.length ? (
             conversations.map((conv) => (
               <div
                 key={conv.otherUser?._id}
@@ -112,7 +136,9 @@ export default function MessagesPage() {
                 />
                 <div>
                   <h3 className="font-semibold">{conv.otherUser.username}</h3>
-                  <p className="text-sm text-gray-400">{conv.lastMessage?.text || t('noMessages')}</p>
+                  <p className="text-sm text-gray-300 line-clamp-1">
+                    {conv.lastMessage?.text || t('noMessages')}
+                  </p>
                 </div>
               </div>
             ))
@@ -122,6 +148,7 @@ export default function MessagesPage() {
         </div>
       </div>
 
+      {/* Panel de chat */}
       <div className="flex-1 flex flex-col">
         {selectedUser ? (
           <>
@@ -135,15 +162,26 @@ export default function MessagesPage() {
               </Link>
               <h2 className="text-lg font-bold">{selectedUser.username}</h2>
             </div>
+
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg) => (
-                <div key={msg._id} className={`flex ${msg.senderId === session.user.id ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`p-3 rounded-lg max-w-xs ${msg.senderId === session.user.id ? 'bg-pink-600 text-white' : 'bg-gray-700 text-gray-200'}`}>
+                <div
+                  key={msg._id}
+                  className={`flex ${msg.senderId === session.user.id ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`p-3 rounded-lg max-w-xs ${
+                      msg.senderId === session.user.id
+                        ? 'bg-pink-600 text-white'
+                        : 'bg-gray-700 text-gray-200'
+                    }`}
+                  >
                     <p>{msg.text}</p>
                   </div>
                 </div>
               ))}
             </div>
+
             <form onSubmit={handleSendMessage} className="bg-gray-800 p-4 flex items-center border-t border-gray-700">
               <input
                 type="text"
@@ -152,16 +190,20 @@ export default function MessagesPage() {
                 placeholder={t('writeMessagePlaceholder')}
                 className="flex-1 bg-gray-700 text-white border-none rounded-full px-4 py-2 focus:outline-none"
               />
-              <button type="submit" className="ml-4 p-2 rounded-full bg-pink-600 text-white hover:bg-pink-700 transition-colors">
+              <button
+                type="submit"
+                className="ml-4 p-2 rounded-full bg-pink-600 text-white hover:bg-pink-700 transition-colors"
+              >
                 <FaPaperPlane className="w-5 h-5" />
               </button>
             </form>
           </>
         ) : (
-          <div className="flex-1 flex justify-center items-center text-gray-400">{t('selectConversation')}</div>
+          <div className="flex-1 flex justify-center items-center text-gray-400">
+            {t('selectConversation')}
+          </div>
         )}
       </div>
     </div>
   );
 }
-
