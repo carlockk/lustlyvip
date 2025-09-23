@@ -3,9 +3,6 @@
 
 import { useLanguage } from "@/lib/i18n";
 
-export const dynamic = "force-dynamic"; // opcional: evita prerender
-export const revalidate = 0;
-
 export default function PaymentCancelPage() {
   const { t } = useLanguage();
   return (
