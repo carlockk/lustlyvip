@@ -87,6 +87,7 @@ const STRINGS = {
     publicSuggestionsTitle: 'Nuevos creadores',
     creatorPlaceholder: 'Creador',
     userHandlePlaceholder: '@usuario',
+    commentsTagHint: 'Comentarios permiten etiquetar con @usuario',
     lightMode: 'Modo claro',
     darkMode: 'Modo oscuro',
     switchTheme: 'Cambiar tema',
@@ -241,6 +242,7 @@ const STRINGS = {
     publicSuggestionsTitle: 'New creators',
     creatorPlaceholder: 'Creator',
     userHandlePlaceholder: '@user',
+    commentsTagHint: 'Comments support tagging with @username',
     lightMode: 'Light mode',
     darkMode: 'Dark mode',
     switchTheme: 'Toggle theme',
@@ -327,6 +329,7 @@ try {
     noAccountQuestion: '¿No tienes una cuenta?',
     signupHere: 'Regístrate aquí',
     signupTitle: 'Crea tu cuenta gratis',
+    signupHeroBody: 'Publica contenido exclusivo, gestiona suscripciones y conecta con tu comunidad.',
     username: 'Nombre de usuario',
     email: 'Correo electrónico',
     password: 'Contraseña',
@@ -350,6 +353,7 @@ try {
     noAccountQuestion: "Don't have an account?",
     signupHere: 'Sign up here',
     signupTitle: 'Create your account',
+    signupHeroBody: 'Publish exclusive content, manage subscriptions, and engage your community.',
     username: 'Username',
     email: 'Email',
     password: 'Password',
@@ -408,6 +412,8 @@ Object.assign(STRINGS.en, { loadingProfile:  'Loading profile...', defaultBio: '
 
 
 Object.assign(STRINGS.es, { postLoadError:  'No se pudo cargar el post', previous: 'Anterior', next: 'Siguiente', lockedContent: 'Contenido bloqueado', buyPpv: 'Comprar PPV', tipAmountPrompt: 'Monto de propina (USD, ej: 5.00):', invalidAmount: 'Monto inválido', addedToFavorites: 'Creador agregado a favoritos', checkoutStartError: 'No se pudo iniciar el checkout', paymentStartError: 'No se pudo iniciar el pago' }); 
+Object.assign(STRINGS.es, { removedFromFavorites: 'Creador quitado de favoritos' });
+Object.assign(STRINGS.en, { removedFromFavorites: 'Creator removed from favorites' });
 Object.assign(STRINGS.en, { postLoadError:  'Failed to load post', previous: 'Previous', next: 'Next', lockedContent: 'Locked content', buyPpv: 'Buy PPV', tipAmountPrompt: 'Tip amount (USD, e.g., 5.00):', invalidAmount: 'Invalid amount', addedToFavorites: 'Creator added to favorites', checkoutStartError: 'Could not start checkout', paymentStartError: 'Could not start payment' }); 
 
 
@@ -417,6 +423,9 @@ Object.assign(STRINGS.en, { mustLoginToSubscribe:  'You must log in to subscribe
 
 Object.assign(STRINGS.es, { accountType: 'Tipo de cuenta', consumer:'Consumidor', creator:'Creador', becomeCreator:'Conviértete en creador', becomeCreatorTitle:'¿Quieres monetizar tu contenido?', becomeCreatorBody:'Cambia tu cuenta a creador y comienza a publicar.', becomeCreatorError:'No se pudo cambiar el rol. Inténtalo nuevamente.' }); 
 Object.assign(STRINGS.en, { accountType: 'Account type', consumer:'Consumer', creator:'Creator', becomeCreator:'Become a creator', becomeCreatorTitle:'Want to monetize your content?', becomeCreatorBody:'Switch your account to creator and start posting.', becomeCreatorError:'Could not change role. Please try again.' }); 
+
+Object.assign(STRINGS.es, { roleLabel: 'Tipo de cuenta', roleConsumer: 'Soy fan (solo ver contenido)', roleCreator: 'Soy creador/a (publicar contenido)' });
+Object.assign(STRINGS.en, { roleLabel: 'Account type', roleConsumer: 'Fan (view content only)', roleCreator: 'Creator (publish content)' });
 
 
 Object.assign(STRINGS.es, { deleteAccount: 'Eliminar cuenta', deleteAccountDesc:'Esta acción es permanente y eliminará tu perfil, publicaciones, mensajes y suscripciones.', confirmDeleteAccountPrompt:'Escribe ELIMINAR para confirmar', accountDeleted:'Cuenta eliminada', deleteAccountError:'No se pudo eliminar la cuenta' }); 

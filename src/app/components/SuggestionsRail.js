@@ -91,30 +91,29 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="block group rounded-3xl overflow-hidden border border-gray-800 bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                className="block group rounded-3xl overflow-hidden border border-gray-800 bg-black/70 dark:bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
               >
-                <div className="relative h-28 w-full bg-gray-800">
+                <div className="relative h-36 w-full bg-gray-800">
                   {cover ? (
                     <img src={cover} alt={`${username} cover`} className="w-full h-full object-cover" />
                   ) : null}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/35 to-black/75" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/55 to-black/90" />
 
-                  <div className="absolute -bottom-10 left-4 flex items-center gap-3">
+                  <div className="absolute left-4 right-4 bottom-4 flex items-center gap-3">
                     <div className="rounded-full p-1.5 bg-black/40 backdrop-blur">
                       <img
                         src={avatar}
                         alt={username}
-                        className="w-20 h-20 rounded-full object-cover ring-2 ring-white/70"
+                        className="w-16 h-16 rounded-full object-cover ring-2 ring-white/80"
                       />
                     </div>
+                    <div className="min-w-0 text-white">
+                      <div className="font-semibold text-base leading-tight truncate group-hover:text-pink-300">
+                        {username}
+                      </div>
+                      <div className="text-xs text-gray-300 truncate">{at}</div>
+                    </div>
                   </div>
-                </div>
-
-                <div className="pt-14 pb-5 px-5">
-                  <div className="font-semibold text-base text-white leading-tight truncate group-hover:text-pink-300">
-                    {username}
-                  </div>
-                  <div className="text-sm text-gray-400 truncate">{at}</div>
                 </div>
               </Link>
             );

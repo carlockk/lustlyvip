@@ -7,6 +7,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n';
 import PublicHighlights from '@/app/components/PublicHighlights';
+import PublicTopbar from '@/app/components/PublicTopbar';
 
 
 export default function LoginPage() {
@@ -76,37 +77,47 @@ function LoginInner() {
 
   // imagen de fondo
   const BG = '/images/fondoinicio.jpg';
+  const heroNote = t('homeHeroNote') || 'Explora avances de publicaciones públicas, descubre nuevos creadores y activa notificaciones personalizadas cuando te unas.';
 
   return (
     <>
       {/* Hero de login */}
-      <div className="relative min-h-screen">
-        {/* Fondo */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${BG})` }}
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-black/45" aria-hidden="true" />
+      <div className="relative min-h-[85vh]">
+        <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+          <img
+            src={BG}
+            alt="Fondo"
+            className="w-full h-full object-cover scale-105 blur-[2px]"
+          />
+          <div className="absolute inset-0 bg-black/65" />
+        </div>
 
-        {/* Panel derecho */}
-        <div className="relative min-h-screen flex justify-end">
-          <div className="w-full max-w-md bg-gray-900/85 backdrop-blur-sm border-l border-gray-800 px-8 py-10 flex flex-col">
-            {/* Marca */}
-            <div className="mb-8">
-              <Link href="/" className="inline-flex items-center gap-2">
-                <span className="text-2xl font-extrabold tracking-wide">Lustly</span>
-                <span className="text-pink-500">♥</span>
-              </Link>
-              <h1 className="mt-4 text-3xl font-bold">
-                {t('loginTitle') || 'Inicia sesión en tu cuenta'}
-              </h1>
-              <p className="mt-1 text-gray-400">
-                {t('loginSubtitle') || 'Accede para descubrir contenido exclusivo.'}
-              </p>
+        <div className="relative z-10 flex flex-col min-h-[85vh]">
+          <PublicTopbar showLoginButton={false} fullWidth />
+          <div className="flex-1 flex flex-col md:flex-row">
+            <div className="flex-1 flex flex-col justify-center px-8 md:px-12 lg:px-20 py-12 text-gray-100 space-y-6">
+              <div className="max-w-2xl space-y-4">
+                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
+                  Descubre a creadores increíbles
+                </h1>
+                <p className="text-base lg:text-lg text-gray-200/90">
+                  Conecta con artistas y recibe contenido exclusivo en cualquier momento.
+                </p>
+              </div>
+            <div className="max-w-sm rounded-2xl border border-gray-800 bg-gray-900/70 px-4 py-3 text-sm text-gray-900 dark:text-gray-200">
+              {heroNote}
+            </div>
             </div>
 
-            {/* Form */}
+          <div className="w-full max-w-md bg-gray-900/70 backdrop-blur-[4px] border-l border-gray-800 px-8 py-10 flex flex-col">
+            <div className="mb-8 text-gray-100 text-sm uppercase tracking-widest flex items-center gap-2">
+              <span className="text-2xl font-extrabold tracking-wide">Lustly</span>
+              <span className="text-pink-500">♥</span>
+            </div>
+            <h1 className="text-3xl font-bold mb-6">
+              {t('loginTitle') || 'Inicia sesión en tu cuenta'}
+            </h1>
+
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
@@ -179,6 +190,7 @@ function LoginInner() {
               © {new Date().getFullYear()} Lustly
             </div>
           </div>
+        </div>
         </div>
       </div>
 

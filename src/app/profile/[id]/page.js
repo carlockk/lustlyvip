@@ -82,7 +82,10 @@ export default function UserProfilePage({ params }) {
       const r = await fetch(`/api/favorites/${profileId}`, { method });
       if (!r.ok) throw new Error('Error');
       setIsFavorite(!isFavorite);
-      if (!isFavorite) setToast({ type: 'success', msg: t('addedToFavorites') || '' });
+      setToast({
+        type: 'success',
+        msg: !isFavorite ? (t('addedToFavorites') || '') : (t('removedFromFavorites') || ''),
+      });
     } catch {}
   };
 
@@ -423,6 +426,16 @@ export default function UserProfilePage({ params }) {
                     className="py-2 px-4 rounded-full font-bold bg-gray-700 hover:bg-gray-600 transition-colors cursor-pointer flex items-center gap-2"
                   >
                     <FaPaperPlane /> <span>{t('message')}</span>
+                  </button>
+                  <button
+                    onClick={toggleFavorite}
+                    className={`py-2 px-4 rounded-full font-bold border transition-colors cursor-pointer ${
+                      isFavorite
+                        ? 'bg-gray-800 border-gray-700 text-pink-400 hover:bg-gray-700'
+                        : 'bg-gray-900 border-gray-700 text-gray-200 hover:bg-gray-800'
+                    }`}
+                  >
+                    {isFavorite ? (t('removeFromFavorites') || 'Quitar de favoritos') : (t('addToFavorites') || 'Agregar a favoritos')}
                   </button>
                 </>
               ) : (

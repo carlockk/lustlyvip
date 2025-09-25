@@ -57,14 +57,12 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
 
           return (
             <Link href={`/profile/${u._id}`} key={u._id} className="block group">
-              <div className="relative rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
-                {/* Portada */}
-                <div className="relative h-[120px] w-full">
+              <div className="relative rounded-2xl overflow-hidden border border-gray-800 bg-black/70 dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
+                <div className="relative h-36 w-full">
                   <img src={cover} alt={`${handle} cover`} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-black/90" />
 
-                  {/* Avatar + textos */}
-                  <div className="absolute left-3 right-3 bottom-3 flex items-center gap-3">
+                  <div className="absolute left-4 right-4 bottom-4 flex items-center gap-3">
                     <div className="rounded-full p-1 bg-black/30 backdrop-blur-sm">
                       <img
                         src={avatar}
@@ -72,13 +70,11 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
                         className="w-16 h-16 rounded-full object-cover ring-2 ring-white/70"
                       />
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-white font-semibold text-[15px] leading-tight truncate group-hover:underline">
+                    <div className="min-w-0 text-white">
+                      <div className="text-[15px] font-semibold leading-tight truncate group-hover:underline">
                         {display}
                       </div>
-                      <div className="text-gray-200/90 text-[12px] truncate">
-                        {handle}
-                      </div>
+                      <div className="text-gray-200/90 text-[12px] truncate">{handle}</div>
                     </div>
                   </div>
                 </div>

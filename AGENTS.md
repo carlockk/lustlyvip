@@ -244,3 +244,5 @@ Actualización de memoria – 2025-09-18 (Inicio rediseñado y estado Stripe)
 - Registro de sesiones (hoy):
   - 2025-09-18: Rediseño de Inicio/Explorar y mejoras de Stripe Connect (estado persistente y feedback en la UI); rail de sugerencias actualizado.
   - 2025-09-18: Selector de idioma extendido a vistas públicas (Home/topbar) y traducciones unificadas en railes y highlights; toggles de tema usan almacenamiento unificado para invitados y autenticados.
+  - 2025-09-18: Landing pública integra formulario de login con fondo atenuado; la página de login reutiliza el mismo card y elimina el subtítulo redundante.
+  - 2025-09-18: `/` redirige a `/auth/login`; landing principal usa héroe con blur + panel fijo de login, highlights centrados tipo tarjeta grande y se añadió botón "Agregar a favoritos" en perfiles.

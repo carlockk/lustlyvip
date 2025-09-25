@@ -67,6 +67,9 @@ a {
 /* Barras translúcidas */
 [data-theme="light"] .bg-gray-900\/80 { background-color: rgba(247,248,252,0.8) !important; }
 [data-theme="light"] .bg-gray-900\/70 { background-color: rgba(247,248,252,0.7) !important; }
+[data-theme="light"] .bg-gray-900\/85 { background-color: rgba(255,255,255,0.75) !important; }
+[data-theme="light"] .bg-gray-900\/90 { background-color: rgba(255,255,255,0.8) !important; }
+[data-theme="light"] .bg-gray-800\/60 { background-color: rgba(255,255,255,0.6) !important; }
 
 /* Invertir logo en modo claro (solo útil si el logo es monocromático claro) */
 [data-theme="light"] img.app-logo {

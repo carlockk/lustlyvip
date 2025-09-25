@@ -8,7 +8,7 @@ import LanguageToggle from './LanguageToggle';
 const STORAGE_KEY = 'theme';
 const LEGACY_KEY = 'lustly_theme';
 
-export default function PublicTopbar() {
+export default function PublicTopbar({ showLoginButton = true, fullWidth = false }) {
   const { t } = useLanguage();
   const [theme, setTheme] = useState('dark');
 
@@ -44,21 +44,29 @@ export default function PublicTopbar() {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-      <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-30 w-full border-b border-gray-800 bg-[#101828]/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+      <div
+        className={`${
+          fullWidth
+            ? 'w-full px-6 md:px-10 h-14 flex items-center justify-between'
+            : 'mx-auto max-w-6xl px-4 h-14 flex items-center justify-between'
+        }`}
+      >
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-lg font-bold tracking-wide">Lustly</Link>
-          <nav className="hidden sm:flex items-center gap-2 text-sm">
-            <Link href="/" className="px-3 py-1.5 rounded hover:bg-gray-800">
-              {t('home') || 'Inicio'}
-            </Link>
-            <Link href="/auth/login" className="px-3 py-1.5 rounded bg-pink-600 hover:bg-pink-700 text-white">
-              {t('loginCta') || 'Iniciar Sesión'}
-            </Link>
-          </nav>
+          <Link href="/" className="inline-flex items-center gap-2">
+            <img src="/images/logo.png" alt="Lustly" className="h-8 w-auto app-logo" />
+          </Link>
         </div>
         <div className="flex items-center gap-3">
           <LanguageToggle />
+          {showLoginButton && (
+            <Link
+              href="/auth/login"
+              className="inline-flex items-center px-3 py-1.5 rounded bg-pink-600 hover:bg-pink-700 text-white text-sm font-semibold transition-colors"
+            >
+              {t('loginCta') || 'Iniciar Sesión'}
+            </Link>
+          )}
           <button
             type="button"
             onClick={toggleTheme}
