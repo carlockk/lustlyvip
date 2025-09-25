@@ -57,6 +57,7 @@ const STRINGS = {
     // Pages: explore
     exploreCreatorsTitle: 'Explorar creadores',
     loadingGeneric: 'Cargando...',
+    lastPostAgo: 'Última publicación',
     // Pages: earnings
     earningsPpvTitle: 'Ganancias PPV',
     gross: 'Bruto',
@@ -71,6 +72,12 @@ const STRINGS = {
     searching: 'Buscando...',
     welcomeTo: 'Bienvenido a:',
     loginCta: 'Iniciar Sesión',
+    homeHeroTitle: 'Descubre a creadores increíbles',
+    homeHeroSubtitle: 'Conecta con artistas y recibe contenido exclusivo en cualquier momento.',
+    homeHeroNote: 'Explora avances de publicaciones públicas, descubre nuevos creadores y activa notificaciones personalizadas cuando te unas.',
+    homeFeedTitle: 'Inicio',
+    homeFeedSubtitle: 'Descubre contenido de tus creadores favoritos y encuentra nuevas recomendaciones.',
+    suggestedCreators: 'Creadores sugeridos',
     // Add Card
     addCardTitleFull: 'Añadir tarjeta',
     addCardDesc: 'Gestiona tus métodos de pago de forma segura en el portal de Stripe.',
@@ -121,6 +128,9 @@ const STRINGS = {
     introDiscountOnce: 'Descuento 1ª compra (%)',
     createCouponHelp: 'Crea price y cupón (una vez) si defines monto y % > 0.',
     savePlans: 'Guardar planes',
+    statusUpdated: 'Estado actualizado',
+    statusCheckError: 'No se pudo actualizar el estado',
+    lastCheckedAt: 'Última verificación',
     // Creator Dashboard
     creatorDashboardTitle: 'Panel del creador',
     range: 'Rango',
@@ -189,6 +199,7 @@ const STRINGS = {
     // Pages: explore
     exploreCreatorsTitle: 'Explore creators',
     loadingGeneric: 'Loading...',
+    lastPostAgo: 'Last post',
     // Pages: earnings
     earningsPpvTitle: 'PPV Earnings',
     gross: 'Gross',
@@ -203,6 +214,12 @@ const STRINGS = {
     searching: 'Searching...',
     welcomeTo: 'Welcome to:',
     loginCta: 'Log in',
+    homeHeroTitle: 'Discover amazing creators',
+    homeHeroSubtitle: 'Connect with your favorite artists and unlock exclusive content, anytime.',
+    homeHeroNote: 'Preview public highlights, discover new creators, and turn on tailored alerts once you join.',
+    homeFeedTitle: 'Home',
+    homeFeedSubtitle: 'Catch up with the creators you follow and discover new favorites.',
+    suggestedCreators: 'Suggested creators',
     // Add Card
     addCardTitleFull: 'Add card',
     addCardDesc: 'Manage your payment methods securely in Stripe portal.',
@@ -253,6 +270,9 @@ const STRINGS = {
     introDiscountOnce: 'Intro discount (%)',
     createCouponHelp: 'Creates price and coupon (once) when amount and % > 0.',
     savePlans: 'Save plans',
+    statusUpdated: 'Status updated',
+    statusCheckError: 'Unable to refresh status',
+    lastCheckedAt: 'Last checked',
     // Creator Dashboard
     creatorDashboardTitle: 'Creator dashboard',
     range: 'Range',

@@ -104,6 +104,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    monetizationEnabled: {
+        type: Boolean,
+        default: true,
+    },
     // Favoritos: lista de creadores seguidos/favoritos
     favorites: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true }

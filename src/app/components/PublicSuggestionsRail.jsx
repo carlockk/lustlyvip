@@ -3,9 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-// Debug para verificar que este archivo se monta
-console.log('PublicSuggestionsRail ACTIVO v2');
-
 export default function PublicSuggestionsRail({ limit = 8 }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);

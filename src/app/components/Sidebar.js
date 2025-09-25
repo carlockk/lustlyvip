@@ -75,21 +75,24 @@ export default function Sidebar() {
     if (PANEL_ROUTES.some(r => isActive(r.href))) setPanelOpen(true);
   }, [pathname, PANEL_ROUTES]);
 
-  const NavLinks = () => (
-    <nav className="flex flex-col w-full space-y-1">
-      {MAIN_ITEMS.map((item) => (
-        <Link
-          key={item.key}
-          href={item.href}
-          onClick={() => setOpen(false)}
-          className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-colors cursor-pointer ${
-            isActive(item.href) ? 'bg-pink-600 text-white' : 'hover:bg-gray-700 text-gray-200'
-          }`}
-        >
-          <item.icon className="text-2xl" />
-          <span className="font-medium">{t(item.key)}</span>
-        </Link>
-      ))}
+  const NavLinks = () => {
+    // Mantenemos la entrada de Explore en la configuración pero la ocultamos temporalmente.
+    const visibleItems = MAIN_ITEMS.filter((item) => item.key !== 'explore');
+    return (
+      <nav className="flex flex-col w-full space-y-1">
+        {visibleItems.map((item) => (
+          <Link
+            key={item.key}
+            href={item.href}
+            onClick={() => setOpen(false)}
+            className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-colors cursor-pointer ${
+              isActive(item.href) ? 'bg-pink-600 text-white' : 'hover:bg-gray-700 text-gray-200'
+            }`}
+          >
+            <item.icon className="text-2xl" />
+            <span className="font-medium">{t(item.key)}</span>
+          </Link>
+        ))}
 
       {session && !isCreator && (
         <div className="mt-2 p-3 rounded-lg border border-gray-700 bg-gray-800">
@@ -184,8 +187,9 @@ export default function Sidebar() {
           <span className="font-medium">{t('myProfile')}</span>
         </Link>
       )}
-    </nav>
-  );
+      </nav>
+    );
+  };
 
   const ProfileSection = () =>
     session ? (

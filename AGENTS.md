@@ -232,3 +232,14 @@ Actualización de memoria – 2025-09-17 (Stripe Connect en perfil)
 - UI: añadido acceso rápido a Stripe Connect en el perfil propio con badge de estado (No conectado / Conectado, pendiente / Conectado y listo) y botones para “Conectar pagos (Stripe)” y “Revisar estado”.
 - Backend: confirmada la integración Connect en Checkouts (transfer_data.destination + application_fee). Fall‑back de `PLATFORM_FEE_PERCENT` ajustado a 3% en webhook y confirm.
 - Próximos pasos: definir `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` y opcional `STRIPE_CONNECT_ENABLED=1`; completar onboarding Express y probar un pago PPV/suscripción hacia cuenta conectada.
+
+Actualización de memoria – 2025-09-18 (Inicio rediseñado y estado Stripe)
+
+- Último contexto (delta hoy):
+  - Inicio ya no redirige a Explorar; ahora muestra el feed de posts para usuarios autenticados, un hero público con CTA y el rail de sugerencias estilizado.
+  - Explorar actualiza sus tarjetas con portada, avatar circular grande y métrica de última publicación usando formato relativo.
+  - Monetización persiste `monetizationEnabled` en el modelo `User` y la vista muestra la última verificación del estado de Stripe con mensajes claros al refrescar.
+  - Sidebar oculta temporalmente el enlace a Explorar (se conserva en configuración) y `SuggestionsRail` adopta el nuevo estilo de tarjetas grandes.
+
+- Registro de sesiones (hoy):
+  - 2025-09-18: Rediseño de Inicio/Explorar y mejoras de Stripe Connect (estado persistente y feedback en la UI); rail de sugerencias actualizado.

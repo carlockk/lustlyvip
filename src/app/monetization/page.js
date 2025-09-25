@@ -32,6 +32,7 @@ export default function MonetizationPage() {
     accountId: null,
     loading: false,
     error: null,
+    lastChecked: null,
   });
 
   // ventas on/off
@@ -66,7 +67,13 @@ export default function MonetizationPage() {
       try {
         const cs = await fetch("/api/stripe/connect/status");
         const j = await cs.json();
-        if (cs.ok) setConnect((c) => ({ ...c, ...j }));
+        if (cs.ok)
+          setConnect((c) => ({
+            ...c,
+            ...j,
+            error: null,
+            lastChecked: new Date().toISOString(),
+          }));
       } catch {}
       try {
         const st = await fetch("/api/creators/monetization/toggle");
@@ -111,9 +118,22 @@ export default function MonetizationPage() {
       const r = await fetch("/api/stripe/connect/status", { method: "POST" });
       const j = await r.json();
       if (!r.ok) throw new Error(j.message || "Error");
-      setConnect((c) => ({ ...c, ...j, loading: false }));
+      const statusLabel = j.chargesEnabled
+        ? t("connectedAndReady") || "Conectado y listo para cobrar"
+        : t("connectedPending") || "Conectado, pendiente de verificación";
+      setConnect((c) => ({
+        ...c,
+        ...j,
+        loading: false,
+        error: null,
+        lastChecked: new Date().toISOString(),
+      }));
+      setMessage(`${t("statusUpdated") || "Estado actualizado"}: ${statusLabel}`);
     } catch (e) {
-      setConnect((c) => ({ ...c, loading: false, error: e.message }));
+      const fallback = t("statusCheckError") || "No se pudo actualizar el estado";
+      const errMsg = e?.message ? `${fallback}: ${e.message}` : fallback;
+      setConnect((c) => ({ ...c, loading: false, error: e?.message || fallback }));
+      setMessage(errMsg);
     }
   }
 
@@ -277,6 +297,11 @@ export default function MonetizationPage() {
                 {t("account") || "Cuenta"}: {connect.accountId}
               </div>
             )}
+            {connect.lastChecked && (
+              <div className="text-xs text-gray-500 mt-1">
+                {t("lastCheckedAt") || "Última verificación"}: {new Date(connect.lastChecked).toLocaleString()}
+              </div>
+            )}
             {!monetizationEnabled && (
               <div className="text-xs text-amber-400 mt-1">
                 {t("salesPaused") || "Tus ventas están pausadas."}
@@ -411,7 +436,7 @@ export default function MonetizationPage() {
         </button>
       </form>
 
-      {message && <p className="mt-3">{message}</p>}
+      {message && <p className="mt-3 text-sm text-gray-200">{message}</p>}
 
       <hr className="my-6 border-gray-700" />
 

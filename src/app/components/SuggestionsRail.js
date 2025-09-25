@@ -82,7 +82,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
       {!loading && users.length > 0 && (
         <div className="space-y-4">
           {users.map((u) => {
-            const cover = u.coverPhoto || u.cover || ''; // por si lo añades en tu API
+            const cover = u.coverPhoto || u.cover || '';
             const avatar = u.profilePicture || '/images/placeholder-avatar.png';
             const username = u.username || 'user';
             const at = `@${username}`;
@@ -91,35 +91,30 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="block rounded-2xl overflow-hidden border border-gray-800 bg-gradient-to-b from-gray-800 to-gray-900/80 hover:from-gray-700 hover:to-gray-900 transition-colors cursor-pointer"
+                className="block group rounded-3xl overflow-hidden border border-gray-800 bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
               >
-                {/* Cover grande al tope */}
-                <div
-                  className="h-24 w-full bg-gray-800"
-                  style={{
-                    backgroundImage: cover ? `url(${cover})` : undefined,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
+                <div className="relative h-28 w-full bg-gray-800">
+                  {cover ? (
+                    <img src={cover} alt={`${username} cover`} className="w-full h-full object-cover" />
+                  ) : null}
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/35 to-black/75" />
 
-                {/* Cuerpo: avatar + textos */}
-                <div className="relative p-4">
-                  {/* Avatar grande superpuesto */}
-                  <div className="absolute -top-8 left-4">
-                    <img
-                      src={avatar}
-                      alt={username}
-                      className="w-16 h-16 rounded-full object-cover ring-4 ring-gray-900"
-                    />
-                  </div>
-
-                  <div className="pl-20">
-                    <div className="text-base font-bold text-white leading-6 truncate">
-                      {username}
+                  <div className="absolute -bottom-10 left-4 flex items-center gap-3">
+                    <div className="rounded-full p-1.5 bg-black/40 backdrop-blur">
+                      <img
+                        src={avatar}
+                        alt={username}
+                        className="w-20 h-20 rounded-full object-cover ring-2 ring-white/70"
+                      />
                     </div>
-                    <div className="text-sm text-gray-400 truncate">{at}</div>
                   </div>
+                </div>
+
+                <div className="pt-14 pb-5 px-5">
+                  <div className="font-semibold text-base text-white leading-tight truncate group-hover:text-pink-300">
+                    {username}
+                  </div>
+                  <div className="text-sm text-gray-400 truncate">{at}</div>
                 </div>
               </Link>
             );
