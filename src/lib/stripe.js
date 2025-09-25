@@ -10,7 +10,7 @@ export function getStripe() {
   }
   // Cargar stripe con require dinámico para evitar fallos si aún no está instalado en build previo
   // Nota: hay que instalar la dependencia `stripe`.
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line global-require
   const Stripe = require('stripe');
   return new Stripe(secretKey, { apiVersion: '2024-06-20' });
 }
@@ -38,4 +38,3 @@ export async function ensureStripeCustomer(userId) {
 export function appBaseUrl() {
   return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 }
-

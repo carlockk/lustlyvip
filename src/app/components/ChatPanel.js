@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { FaFacebookMessenger } from 'react-icons/fa';
 import Link from 'next/link';
@@ -22,13 +22,15 @@ export default function ChatPanel() {
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
 
-  const loadConversations = async () => {
+  const loadConversations = useCallback(async () => {
     try {
       const r = await fetch('/api/messages');
       if (!r.ok) return;
       const j = await r.json();
       setConversations(j.conversations || []);
-      if (!selectedUser && (j.conversations||[]).length > 0) setSelectedUser(j.conversations[0].otherUser);
+      if ((j.conversations || []).length > 0) {
+        setSelectedUser((prev) => prev || j.conversations[0].otherUser);
+      }
       // calcular no leídos aproximado
       try {
         const me = session?.user?.id;
@@ -46,9 +48,9 @@ export default function ChatPanel() {
         setUnreadCount(count);
       } catch {}
     } catch {}
-  };
+  }, [session?.user?.id]);
 
-  const loadMessages = async (userId) => {
+  const loadMessages = useCallback(async (userId) => {
     try {
       const r = await fetch(`/api/messages?userId=${encodeURIComponent(userId)}`);
       if (!r.ok) return;
@@ -56,13 +58,15 @@ export default function ChatPanel() {
       setMessages(j.messages || []);
       setTimeout(() => { try { listRef.current?.scrollTo({ top: listRef.current.scrollHeight }); } catch {} }, 20);
     } catch {}
-  };
+  }, []);
 
   useEffect(() => {
     if (open && session) loadConversations();
-  }, [open, session]);
+  }, [open, session, loadConversations]);
 
-  useEffect(() => { if (selectedUser) loadMessages(selectedUser._id); }, [selectedUser]);
+  useEffect(() => {
+    if (selectedUser) loadMessages(selectedUser._id);
+  }, [selectedUser, loadMessages]);
 
   // Cerrar al hacer click fuera del panel
   useEffect(() => {
@@ -154,10 +158,17 @@ export default function ChatPanel() {
               </div>
               <div className="flex-1 overflow-y-auto">
                 {(conversations||[]).map((c)=>(
-                  <button key={c.otherUser?._id} onClick={()=>{
-                    setSelectedUser(c.otherUser);
-                    try { localStorage.setItem(`lustly_chat_read_${c.otherUser?._id}`, String(Date.now())); loadConversations(); } catch {}
-                  }} className={`w-full flex items-center gap-2 p-3 text-left hover:bg-gray-700 ${selectedUser?._id===c.otherUser._id?'bg-gray-700':''}`}>
+                  <button
+                    key={c.otherUser?._id}
+                    onClick={() => {
+                      setSelectedUser(c.otherUser);
+                      try {
+                        localStorage.setItem(`lustly_chat_read_${c.otherUser?._id}`, String(Date.now()));
+                        loadConversations();
+                      } catch {}
+                    }}
+                    className={`w-full flex items-center gap-2 p-3 text-left hover:bg-gray-700 ${selectedUser?._id===c.otherUser._id?'bg-gray-700':''}`}
+                  >
                     <img src={c.otherUser.profilePicture || '/images/placeholder-avatar.png'} alt={c.otherUser.username} className="w-8 h-8 rounded-full object-cover" />
                     <div className="flex-1">
                       <div className="text-sm font-semibold">@{c.otherUser.username}</div>

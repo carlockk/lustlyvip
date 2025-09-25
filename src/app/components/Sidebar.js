@@ -1,7 +1,7 @@
 // src/app/components/Sidebar.js
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -68,12 +68,14 @@ export default function Sidebar() {
     { href: '/creator/dashboard',  label: t('dashboard') || 'Panel del creador',    Icon: MdDashboard },
   ]), [t]);
 
-  const isActive = (href) =>
-    pathname === href || (href !== '/' && pathname?.startsWith(href + '/'));
+  const isActive = useCallback(
+    (href) => pathname === href || (href !== '/' && pathname?.startsWith(href + '/')),
+    [pathname]
+  );
 
   useEffect(() => {
-    if (PANEL_ROUTES.some(r => isActive(r.href))) setPanelOpen(true);
-  }, [pathname, PANEL_ROUTES]);
+    if (PANEL_ROUTES.some((r) => isActive(r.href))) setPanelOpen(true);
+  }, [pathname, PANEL_ROUTES, isActive]);
 
   const NavLinks = () => {
     // Mantenemos la entrada de Explore en la configuración pero la ocultamos temporalmente.

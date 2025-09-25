@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -27,34 +27,45 @@ export default function PostList({ endpoint = '/api/posts' }) {
     try { return new Intl.DateTimeFormat(lang || 'es', { dateStyle: 'medium', timeStyle: 'short' }); } catch { return null; }
   }, [lang]);
 
-  const fetchPage = async (p = 0, append = false) => {
-    const q = endpoint.includes('?') ? `${endpoint}&limit=${limit}&offset=${p * limit}` : `${endpoint}?limit=${limit}&offset=${p * limit}`;
-    try {
-      if (!append) { setIsLoading(true); } else { setIsLoadingMore(true); }
-      const res = await fetch(q);
-      if (!res.ok) throw new Error('Error');
-      const data = await res.json();
-      const newPosts = (data.posts || []).filter(Boolean);
-      if (append) {
-        const existingIds = new Set(posts.map(p => String(p._id)));
-        const merged = [...posts, ...newPosts.filter(p => !existingIds.has(String(p._id)))];
-        setPosts(merged);
-      } else {
-        setPosts(newPosts);
+  const fetchPage = useCallback(
+    async (p = 0, append = false) => {
+      const q = endpoint.includes('?')
+        ? `${endpoint}&limit=${limit}&offset=${p * limit}`
+        : `${endpoint}?limit=${limit}&offset=${p * limit}`;
+      try {
+        if (!append) {
+          setIsLoading(true);
+        } else {
+          setIsLoadingMore(true);
+        }
+        const res = await fetch(q);
+        if (!res.ok) throw new Error('Error');
+        const data = await res.json();
+        const newPosts = (data.posts || []).filter(Boolean);
+        setPosts((prev) => {
+          if (!append) return newPosts;
+          const existingIds = new Set(prev.map((item) => String(item._id)));
+          const merged = [...prev, ...newPosts.filter((item) => !existingIds.has(String(item._id)))];
+          return merged;
+        });
+        setHasMore(newPosts.length >= limit);
+      } catch (e) {
+        setError(t('postsLoadError') || 'Error');
+      } finally {
+        setIsLoading(false);
+        setIsLoadingMore(false);
       }
-      setHasMore(newPosts.length >= limit);
-    } catch (e) {
-      setError(t('postsLoadError') || 'Error');
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  };
+    },
+    [endpoint, limit, t]
+  );
 
   useEffect(() => {
-    if (status !== 'loading') { setPage(0); setHasMore(true); fetchPage(0, false); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, endpoint]);
+    if (status !== 'loading') {
+      setPage(0);
+      setHasMore(true);
+      fetchPage(0, false);
+    }
+  }, [status, endpoint, fetchPage]);
 
   // Ajustar ancho objetivo de imágenes según viewport (para Cloudinary)
   useEffect(() => {
@@ -91,7 +102,7 @@ export default function PostList({ endpoint = '/api/posts' }) {
     }, { rootMargin: '200px 0px' });
     io.observe(el);
     return () => { try { io.disconnect(); } catch {} };
-  }, [page, hasMore, isLoading]);
+  }, [page, hasMore, isLoading, fetchPage]);
 
   // Cargar favoritos del usuario para poder alternar agregar/quitar
   useEffect(() => {
