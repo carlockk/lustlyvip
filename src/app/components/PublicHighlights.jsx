@@ -1,34 +1,44 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import Link from 'next/link';
-
-function timeAgo(ts) {
-  try {
-    const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
-    const diff = (Date.now() - new Date(ts).getTime()) / 1000;
-    const map = [
-      ['year', 60 * 60 * 24 * 365],
-      ['month', 60 * 60 * 24 * 30],
-      ['week', 60 * 60 * 24 * 7],
-      ['day', 60 * 60 * 24],
-      ['hour', 60 * 60],
-      ['minute', 60],
-      ['second', 1],
-    ];
-    for (const [unit, sec] of map) {
-      const delta = Math.floor(diff / sec);
-      if (Math.abs(delta) >= 1) return rtf.format(-delta, unit);
-    }
-    return rtf.format(0, 'second');
-  } catch {
-    return new Date(ts).toLocaleString();
-  }
-}
+import { useLanguage } from '@/lib/i18n';
 
 export default function PublicHighlights({ limit = 20 }) {
+  const { t, lang } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const timeAgo = useCallback(
+    (ts) => {
+      try {
+        const locale = lang || undefined;
+        const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+        const diff = (Date.now() - new Date(ts).getTime()) / 1000;
+        const units = [
+          ['year', 60 * 60 * 24 * 365],
+          ['month', 60 * 60 * 24 * 30],
+          ['week', 60 * 60 * 24 * 7],
+          ['day', 60 * 60 * 24],
+          ['hour', 60 * 60],
+          ['minute', 60],
+          ['second', 1],
+        ];
+        for (const [unit, seconds] of units) {
+          const delta = Math.floor(diff / seconds);
+          if (Math.abs(delta) >= 1) return rtf.format(-delta, unit);
+        }
+        return rtf.format(0, 'second');
+      } catch {
+        try {
+          return new Date(ts).toLocaleString(lang || undefined);
+        } catch {
+          return new Date(ts).toLocaleString();
+        }
+      }
+    },
+    [lang]
+  );
 
   useEffect(() => {
     let alive = true;
@@ -37,19 +47,27 @@ export default function PublicHighlights({ limit = 20 }) {
         const r = await fetch(`/api/posts/public?limit=${limit}`, { cache: 'no-store' });
         const j = await r.json();
         if (alive && r.ok) setPosts(j.posts || []);
-      } catch (e) {
-        // no-op
+      } catch {
+        if (alive) setPosts([]);
       } finally {
         if (alive) setLoading(false);
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [limit]);
+
+  const title = t('publicHighlightsTitle') || 'Últimas publicaciones destacadas';
+  const empty = t('publicHighlightsEmpty') || 'Aún no hay publicaciones.';
+  const exclusiveLabel = t('exclusiveContentLabel') || 'Contenido exclusivo';
+  const viewProfileLabel = t('viewProfile') || 'Ver perfil';
+  const subscribeLabel = t('subscribe') || 'Suscribirse';
 
   return (
     <section className="bg-gray-900 text-gray-100 border-t border-gray-800">
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Últimas publicaciones destacadas</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">{title}</h2>
 
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -58,28 +76,27 @@ export default function PublicHighlights({ limit = 20 }) {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="text-gray-400">Aún no hay publicaciones.</div>
+          <div className="text-gray-400">{empty}</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {posts.map((p) => {
               const mediaUrl = p.videoUrl || p.imageUrl || null;
               const isVideo = !!p.videoUrl || (p.imageUrl && !/\.(jpeg|jpg|gif|png|webp)$/i.test(p.imageUrl || ''));
+              const fallbackHandle = t('creatorPlaceholder') || 'user';
               return (
                 <article key={p._id} className="rounded-lg bg-gray-800 overflow-hidden shadow">
-                  {/* header */}
                   <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-700">
                     <img
                       src={p.creator?.profilePicture || '/images/placeholder-avatar.png'}
-                      alt={p.creator?.username || 'user'}
+                      alt={p.creator?.username || fallbackHandle}
                       className="w-9 h-9 rounded-full object-cover"
                     />
                     <div className="min-w-0">
-                      <div className="font-semibold truncate">@{p.creator?.username || 'usuario'}</div>
+                      <div className="font-semibold truncate">@{p.creator?.username || fallbackHandle}</div>
                       <div className="text-xs text-gray-400">{timeAgo(p.createdAt)}</div>
                     </div>
                   </div>
 
-                  {/* media */}
                   {mediaUrl && (
                     <div className="relative">
                       {isVideo ? (
@@ -98,32 +115,29 @@ export default function PublicHighlights({ limit = 20 }) {
                       )}
                       {p.isExclusive && (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="px-2 py-1 rounded bg-black/60 text-white text-xs">Contenido exclusivo</span>
+                          <span className="px-2 py-1 rounded bg-black/60 text-white text-xs">
+                            {exclusiveLabel}
+                          </span>
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* text (solo mostrar si es público) */}
                   {p.text && !p.isExclusive && (
                     <p className="px-4 py-3 text-sm text-gray-200 whitespace-pre-wrap">
-                      {p.text.length > 220 ? p.text.slice(0, 220) + '…' : p.text}
+                      {p.text.length > 220 ? `${p.text.slice(0, 220)}…` : p.text}
                     </p>
                   )}
 
-                  {/* footer */}
                   <div className="px-4 py-3 border-t border-gray-700 flex items-center gap-3">
-                    <Link
-                      href={`/profile/${p.creatorId}`}
-                      className="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm"
-                    >
-                      Ver perfil
+                    <Link href={`/profile/${p.creatorId}`} className="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm">
+                      {viewProfileLabel}
                     </Link>
                     <Link
                       href={`/auth/login?callbackUrl=${encodeURIComponent(`/profile/${p.creatorId}`)}`}
                       className="px-3 py-1.5 rounded bg-pink-600 hover:bg-pink-700 text-sm"
                     >
-                      Suscribirse
+                      {subscribeLabel}
                     </Link>
                   </div>
                 </article>

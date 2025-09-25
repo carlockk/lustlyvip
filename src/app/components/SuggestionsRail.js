@@ -75,7 +75,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
 
       {!loading && users.length === 0 && (
         <div className="text-sm text-gray-500 bg-gray-900/60 border border-gray-800 rounded-xl p-4">
-          Sin sugerencias por ahora.
+          {t('noSuggestionsYet') || 'Sin sugerencias por ahora.'}
         </div>
       )}
 

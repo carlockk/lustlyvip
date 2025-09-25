@@ -1,29 +1,46 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { useLanguage } from '@/lib/i18n';
+import LanguageToggle from './LanguageToggle';
+
+const STORAGE_KEY = 'theme';
+const LEGACY_KEY = 'lustly_theme';
 
 export default function PublicTopbar() {
+  const { t } = useLanguage();
   const [theme, setTheme] = useState('dark');
 
-  useEffect(() => {
-    // lee tema guardado o media query
-    try {
-      const saved = localStorage.getItem('lustly_theme');
-      const prefDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-      const initial = saved || (prefDark ? 'dark' : 'light');
-      setTheme(initial);
-      document.documentElement.classList.toggle('dark', initial === 'dark');
-    } catch {}
+  const syncTheme = useCallback((value) => {
+    if (!value) return;
+    document.documentElement.dataset.theme = value;
+    if (document.body) document.body.dataset.theme = value;
+    document.documentElement.classList.toggle('dark', value === 'dark');
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: value } }));
   }, []);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY);
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+      setTheme(initial);
+      syncTheme(initial);
+    } catch {
+      setTheme('dark');
+      syncTheme('dark');
+    }
+  }, [syncTheme]);
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
     try {
-      localStorage.setItem('lustly_theme', next);
+      localStorage.setItem(STORAGE_KEY, next);
+      localStorage.setItem(LEGACY_KEY, next);
     } catch {}
-    document.documentElement.classList.toggle('dark', next === 'dark');
+    syncTheme(next);
   };
 
   return (
@@ -32,18 +49,25 @@ export default function PublicTopbar() {
         <div className="flex items-center gap-3">
           <Link href="/" className="text-lg font-bold tracking-wide">Lustly</Link>
           <nav className="hidden sm:flex items-center gap-2 text-sm">
-            <Link href="/" className="px-3 py-1.5 rounded hover:bg-gray-800">Inicio</Link>
-            <Link href="/auth/login" className="px-3 py-1.5 rounded bg-pink-600 hover:bg-pink-700 text-white">Iniciar sesión</Link>
+            <Link href="/" className="px-3 py-1.5 rounded hover:bg-gray-800">
+              {t('home') || 'Inicio'}
+            </Link>
+            <Link href="/auth/login" className="px-3 py-1.5 rounded bg-pink-600 hover:bg-pink-700 text-white">
+              {t('loginCta') || 'Iniciar Sesión'}
+            </Link>
           </nav>
         </div>
-        <div className="flex items-center">
+        <div className="flex items-center gap-3">
+          <LanguageToggle />
           <button
             type="button"
             onClick={toggleTheme}
             className="px-3 py-1.5 rounded border border-gray-700 hover:bg-gray-800 text-sm"
-            title="Cambiar tema"
+            title={t('switchTheme') || 'Cambiar tema'}
           >
-            {theme === 'dark' ? '☀️ Claro' : '🌙 Oscuro'}
+            {theme === 'dark'
+              ? `☀️ ${t('lightMode') || 'Modo claro'}`
+              : `🌙 ${t('darkMode') || 'Modo oscuro'}`}
           </button>
         </div>
       </div>

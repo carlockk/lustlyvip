@@ -6,18 +6,19 @@ import { LanguageProvider } from '@/lib/i18n';
 
 function initTheme() {
   try {
-    const stored = localStorage.getItem('theme');
-    let theme = stored;
-    if (!theme) {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      theme = prefersDark ? 'dark' : 'light';
-    }
+    const legacyKey = 'lustly_theme';
+    const stored = localStorage.getItem('theme') || localStorage.getItem(legacyKey);
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored === 'light' || stored === 'dark' ? stored : prefersDark ? 'dark' : 'light';
+    localStorage.setItem('theme', theme);
+    localStorage.setItem(legacyKey, theme);
     document.documentElement.dataset.theme = theme;
-    document.body.dataset.theme = theme;
+    if (document.body) document.body.dataset.theme = theme;
+    document.documentElement.classList.toggle('dark', theme === 'dark');
   } catch {
-    // fallback a oscuro existente
     document.documentElement.dataset.theme = 'dark';
-    document.body.dataset.theme = 'dark';
+    if (document.body) document.body.dataset.theme = 'dark';
+    document.documentElement.classList.add('dark');
   }
 }
 

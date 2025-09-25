@@ -6,17 +6,17 @@ import { FaHeart, FaImage, FaVideo } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n';
 
 export default function ExplorePage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const rtf = useMemo(() => {
     try {
-      return new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+      return new Intl.RelativeTimeFormat(lang || undefined, { numeric: 'auto' });
     } catch {
       return null;
     }
-  }, []);
+  }, [lang]);
 
   const lastPostLabel = t('lastPostAgo') || 'Última publicación';
 
@@ -39,7 +39,11 @@ export default function ExplorePage() {
       }
       return rtf.format(0, 'second');
     } catch (e) {
-      return new Date(value).toLocaleString();
+      try {
+        return new Date(value).toLocaleString(lang || undefined);
+      } catch {
+        return new Date(value).toLocaleString();
+      }
     }
   };
 

@@ -13,6 +13,7 @@ import { useLanguage } from '@/lib/i18n';
 // ⬇️ Rails de sugerencias
 import PublicSuggestionsRail from '@/app/components/PublicSuggestionsRail';
 import SuggestionsRail from '@/app/components/SuggestionsRail';
+import PublicTopbar from '@/app/components/PublicTopbar';
 
 export default function UserProfilePage({ params }) {
   const { data: session, status, update } = useSession();
@@ -263,6 +264,7 @@ export default function UserProfilePage({ params }) {
     const cb = encodeURIComponent(`/profile/${profileId}`);
     return (
       <div className="flex flex-col min-h-screen bg-gray-900 text-gray-100">
+        <PublicTopbar />
         {toast && (<div className={`fixed top-4 right-4 px-4 py-2 rounded shadow ${toast.type==='error' ? 'bg-red-600' : 'bg-green-600'}`}>{toast.msg}</div>)}
 
         <header className="relative w-full h-48 bg-gray-800">

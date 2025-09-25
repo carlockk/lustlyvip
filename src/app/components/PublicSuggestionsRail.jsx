@@ -1,9 +1,12 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/i18n';
 
 export default function PublicSuggestionsRail({ limit = 8 }) {
+  const { t } = useLanguage();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,16 +42,18 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
 
   return (
     <aside className="hidden xl:block w-[360px] p-4 border-l border-gray-800">
-  <div className="text-xl font-bold text-gray-100 mb-3 leading-tight">
-    Nuevos creadores
-  </div>
+      <div className="text-xl font-bold text-gray-100 mb-3 leading-tight">
+        {t('publicSuggestionsTitle') || 'Nuevos creadores'}
+      </div>
 
       <div className="space-y-3">
         {users.map((u) => {
           const cover = u.coverPhoto || '/images/placeholder-cover.jpg';
           const avatar = u.profilePicture || '/images/placeholder-avatar.png';
-          const handle = u.username ? `@${u.username}` : '@usuario';
-          const display = u.displayName || u.username || 'Creador';
+          const fallbackHandle = t('userHandlePlaceholder') || '@usuario';
+          const fallbackName = t('creatorPlaceholder') || 'Creador';
+          const handle = u.username ? `@${u.username}` : fallbackHandle;
+          const display = u.displayName || u.username || fallbackName;
 
           return (
             <Link href={`/profile/${u._id}`} key={u._id} className="block group">

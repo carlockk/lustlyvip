@@ -7,6 +7,7 @@ import PostList from "@/app/components/PostList";
 import SuggestionsRail from "@/app/components/SuggestionsRail";
 import PublicHighlights from "@/app/components/PublicHighlights";
 import PublicSuggestionsRail from "@/app/components/PublicSuggestionsRail";
+import PublicTopbar from "@/app/components/PublicTopbar";
 import { useLanguage } from "@/lib/i18n";
 
 function AuthenticatedHome({ title, subtitle, suggestionsTitle }) {
@@ -30,6 +31,7 @@ function AuthenticatedHome({ title, subtitle, suggestionsTitle }) {
 function UnauthenticatedHome({ title, subtitle, signupLabel, loginLabel, note }) {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
+      <PublicTopbar />
       <section className="relative overflow-hidden border-b border-gray-800">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#3ca9b230,_transparent_60%)]" aria-hidden="true" />
         <div className="relative max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 px-6 md:px-10 py-20">

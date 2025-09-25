@@ -243,3 +243,4 @@ Actualización de memoria – 2025-09-18 (Inicio rediseñado y estado Stripe)
 
 - Registro de sesiones (hoy):
   - 2025-09-18: Rediseño de Inicio/Explorar y mejoras de Stripe Connect (estado persistente y feedback en la UI); rail de sugerencias actualizado.
+  - 2025-09-18: Selector de idioma extendido a vistas públicas (Home/topbar) y traducciones unificadas en railes y highlights; toggles de tema usan almacenamiento unificado para invitados y autenticados.
