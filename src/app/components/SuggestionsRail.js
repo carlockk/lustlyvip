@@ -4,6 +4,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useLanguage } from '@/lib/i18n';
 
 /**
  * Sidebar de sugerencias con fallback:
@@ -13,6 +14,7 @@ import { useSession } from 'next-auth/react';
  */
 export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' }) {
   const { data: session, status } = useSession();
+  const { t } = useLanguage();
   const [users, setUsers] = useState([]);
   const [usedFallback, setUsedFallback] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -58,8 +60,8 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
   }, [title, usedFallback]);
 
   return (
-    <aside className="hidden xl:block w-80 p-4 border-l border-gray-800">
-      <div className="text-sm font-semibold text-gray-200 mb-3">{header}</div>
+    <aside className="hidden xl:block w-80 p-4 border-l border-slate-200 dark:border-gray-800">
+      <div className="text-base font-semibold text-slate-900 dark:text-gray-200 mb-3">{header}</div>
 
       {/* Loading skeleton simple */}
       {loading && (
@@ -67,14 +69,14 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-32 rounded-2xl bg-gradient-to-b from-gray-800 to-gray-900/80 border border-gray-800 animate-pulse"
+              className="h-32 rounded-2xl bg-gradient-to-b from-slate-200 to-slate-300 dark:from-gray-800 dark:to-gray-900/80 border border-slate-200 dark:border-gray-800 animate-pulse"
             />
           ))}
         </div>
       )}
 
       {!loading && users.length === 0 && (
-        <div className="text-sm text-gray-500 bg-gray-900/60 border border-gray-800 rounded-xl p-4">
+        <div className="text-sm text-slate-500 dark:text-gray-400 bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-xl p-4">
           {t('noSuggestionsYet') || 'Sin sugerencias por ahora.'}
         </div>
       )}
@@ -91,9 +93,9 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="block group rounded-3xl overflow-hidden border border-gray-800 bg-black/70 dark:bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                className="block group rounded-3xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
               >
-                <div className="relative h-36 w-full bg-gray-800">
+                <div className="relative h-36 w-full bg-slate-200 dark:bg-gray-800">
                   {cover ? (
                     <img src={cover} alt={`${username} cover`} className="w-full h-full object-cover" />
                   ) : null}
@@ -107,11 +109,11 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
                         className="w-16 h-16 rounded-full object-cover ring-2 ring-white/80"
                       />
                     </div>
-                    <div className="min-w-0 text-white">
+                    <div className="min-w-0 text-slate-900 dark:text-gray-100">
                       <div className="font-semibold text-base leading-tight truncate group-hover:text-pink-300">
                         {username}
                       </div>
-                      <div className="text-xs text-gray-300 truncate">{at}</div>
+                      <div className="text-xs text-slate-500 dark:text-gray-300 truncate">{at}</div>
                     </div>
                   </div>
                 </div>
@@ -123,3 +125,21 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
     </aside>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

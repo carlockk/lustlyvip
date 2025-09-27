@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FaImage, FaVideo } from 'react-icons/fa'; // Importamos los íconos
 
-export default function NewPost({ autoFocus = false }) {
+export default function NewPost({ autoFocus = false, showHeader = true, className = '' }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [text, setText] = useState('');
@@ -98,9 +98,14 @@ export default function NewPost({ autoFocus = false }) {
     }
   };
 
+  const canPublish = Boolean(text.trim()) || Boolean(media);
+  const baseClasses = 'bg-gray-800 p-6 rounded-lg shadow-lg w-full mb-8';
+  const defaultWidth = className && className.includes('max-w-') ? '' : 'max-w-2xl mx-auto';
+  const containerClass = [baseClasses, defaultWidth, className].filter(Boolean).join(' ');
+
   return (
-    <div className="bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8">
-      <h2 className="text-2xl font-bold mb-4">Crea una nueva publicación:</h2>
+    <div className={containerClass}>
+      {showHeader && <h2 className="text-2xl font-bold mb-4">Crea una nueva publicación:</h2>}
       <form onSubmit={handleSubmit}>
         <textarea
           ref={textareaRef}
@@ -201,7 +206,8 @@ export default function NewPost({ autoFocus = false }) {
           )}
           <button
             type="submit"
-            className="py-2 px-4 rounded-full font-bold text-white bg-pink-600 hover:bg-pink-700 transition-colors"
+            disabled={!canPublish}
+            className="py-2 px-4 rounded-full font-bold text-white bg-pink-600 hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Publicar
           </button>

@@ -3,6 +3,8 @@
 import { useLanguage } from '@/lib/i18n';
 import PostList from '@/app/components/PostList';
 import SuggestionsRail from '@/app/components/SuggestionsRail';
+import HomeSearchBar from '@/app/components/HomeSearchBar';
+import NewPost from '@/app/components/NewPost';
 
 export default function HomeAuthenticated() {
   const { t } = useLanguage();
@@ -19,6 +21,8 @@ export default function HomeAuthenticated() {
               {t('homeFeedSubtitle') || 'Descubre contenido de tus creadores favoritos y encuentra nuevas recomendaciones.'}
             </p>
           </header>
+          <HomeSearchBar />
+          <NewPost showHeader={false} className="max-w-none" />
           <PostList endpoint="/api/posts" />
         </div>
       </main>
@@ -27,4 +31,3 @@ export default function HomeAuthenticated() {
     </div>
   );
 }
-

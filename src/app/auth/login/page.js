@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useLanguage } from '@/lib/i18n';
 import PublicHighlights from '@/app/components/PublicHighlights';
 import PublicTopbar from '@/app/components/PublicTopbar';
+import PoliciesPanel from '@/app/components/PoliciesPanel';
 
 
 export default function LoginPage() {
@@ -25,6 +26,7 @@ function LoginInner() {
   const sp = useSearchParams();
 
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [policiesOpen, setPoliciesOpen] = useState(false);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -93,7 +95,7 @@ function LoginInner() {
         </div>
 
         <div className="relative z-10 flex flex-col min-h-[85vh]">
-          <PublicTopbar showLoginButton={false} fullWidth />
+          <PublicTopbar showLoginButton={false} fullWidth showThemeToggle={false} showPoliticsLink onPoliticsClick={() => setPoliciesOpen(true)} />
           <div className="flex-1 flex flex-col md:flex-row">
             <div className="flex-1 flex flex-col justify-center px-8 md:px-12 lg:px-20 py-12 text-gray-100 space-y-6">
               <div className="max-w-2xl space-y-4">
@@ -196,6 +198,8 @@ function LoginInner() {
 
       {/* Bloque “Últimas publicaciones destacadas” (público) */}
       <PublicHighlights limit={18} />
+      <PoliciesPanel open={policiesOpen} onClose={() => setPoliciesOpen(false)} />
     </>
   );
 }
+

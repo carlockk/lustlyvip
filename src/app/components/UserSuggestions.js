@@ -35,11 +35,11 @@ export default function UserSuggestions() {
 
   if (loading) {
     return (
-      <aside className="hidden xl:block w-[320px] p-4 border-l border-gray-800">
-        <div className="h-6 mb-3 bg-gray-800/80 rounded w-40" />
+      <aside className="hidden xl:block w-[320px] p-4 border-l border-slate-200 dark:border-gray-800">
+        <div className="h-6 mb-3 bg-slate-200 dark:bg-gray-800/80 rounded w-40" />
         <div className="space-y-3">
-          <div className="h-[120px] rounded-2xl bg-gray-800/60" />
-          <div className="h-[120px] rounded-2xl bg-gray-800/60" />
+          <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
+          <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
         </div>
       </aside>
     );
@@ -49,8 +49,8 @@ export default function UserSuggestions() {
   if (!suggestions.length) return null;
 
   return (
-    <aside className="hidden xl:block w-[360px] p-4 border-l border-gray-800">
-  <div className="text-xl font-bold text-gray-100 mb-3 leading-tight">
+    <aside className="hidden xl:block w-[360px] p-4 border-l border-slate-200 dark:border-gray-800">
+  <div className="text-xl font-bold text-slate-900 dark:text-gray-100 mb-3 leading-tight">
     Nuevos creadores
   </div>
 
@@ -63,7 +63,7 @@ export default function UserSuggestions() {
 
           return (
             <Link href={`/profile/${u._id}`} key={u._id} className="block group">
-              <div className="relative rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative h-[120px] w-full">
                   <img src={cover} alt={`${handle} cover`} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70" />
@@ -76,10 +76,10 @@ export default function UserSuggestions() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <div className="text-white font-semibold text-[15px] leading-tight truncate group-hover:underline">
+                      <div className="text-slate-900 dark:text-gray-100 font-semibold text-[15px] leading-tight truncate group-hover:underline">
                         {display}
                       </div>
-                      <div className="text-gray-200/90 text-[12px] truncate">
+                      <div className="text-slate-500 dark:text-gray-200/90 text-[12px] truncate">
                         {handle}
                       </div>
                     </div>
@@ -93,3 +93,9 @@ export default function UserSuggestions() {
     </aside>
   );
 }
+
+
+
+
+
+

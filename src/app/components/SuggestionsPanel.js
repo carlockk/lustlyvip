@@ -80,7 +80,7 @@ export default function SuggestionsPanel({ open, onClose }) {
       {/* panel */}
       <div
         ref={panelRef}
-        className={`absolute top-0 right-0 h-full w-full max-w-md bg-gray-900 border-l border-gray-800 text-gray-100 transform transition-transform duration-300 ${effectiveOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`panel-dark absolute top-0 right-0 h-full w-full max-w-md bg-gray-900 border-l border-gray-800 text-gray-100 transform transition-transform duration-300 ${effectiveOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
         {/* header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
@@ -173,3 +173,4 @@ export default function SuggestionsPanel({ open, onClose }) {
     </div>
   );
 }
+

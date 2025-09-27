@@ -8,7 +8,7 @@ import LanguageToggle from './LanguageToggle';
 const STORAGE_KEY = 'theme';
 const LEGACY_KEY = 'lustly_theme';
 
-export default function PublicTopbar({ showLoginButton = true, fullWidth = false }) {
+export default function PublicTopbar({ showLoginButton = true, fullWidth = false, showThemeToggle = true, showPoliticsLink = false, onPoliticsClick = null }) {
   const { t } = useLanguage();
   const [theme, setTheme] = useState('dark');
 
@@ -59,6 +59,24 @@ export default function PublicTopbar({ showLoginButton = true, fullWidth = false
         </div>
         <div className="flex items-center gap-3">
           <LanguageToggle />
+          {showPoliticsLink && (
+            onPoliticsClick ? (
+              <button
+                type="button"
+                onClick={onPoliticsClick}
+                className="inline-flex items-center px-3 py-1.5 rounded border border-gray-700 text-white hover:bg-gray-800 text-sm transition-colors"
+              >
+                {t('servicePolicies') || 'Políticas del servicio'}
+              </button>
+            ) : (
+              <Link
+                href="/politics"
+                className="inline-flex items-center px-3 py-1.5 rounded border border-gray-700 text-white hover:bg-gray-800 text-sm transition-colors"
+              >
+                {t('servicePolicies') || 'Políticas del servicio'}
+              </Link>
+            )
+          )}
           {showLoginButton && (
             <Link
               href="/auth/login"
@@ -67,16 +85,19 @@ export default function PublicTopbar({ showLoginButton = true, fullWidth = false
               {t('loginCta') || 'Iniciar Sesión'}
             </Link>
           )}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="px-3 py-1.5 rounded border border-gray-700 hover:bg-gray-800 text-sm"
-            title={t('switchTheme') || 'Cambiar tema'}
-          >
-            {theme === 'dark'
-              ? `☀️ ${t('lightMode') || 'Modo claro'}`
-              : `🌙 ${t('darkMode') || 'Modo oscuro'}`}
-          </button>
+          {showThemeToggle && (
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="px-3 py-1.5 rounded border border-gray-700 hover:bg-gray-800 text-sm text-white transition-colors"
+              title={t('switchTheme') || 'Cambiar tema'}
+            >
+              {theme === 'dark'
+                ? `${t('lightMode') || 'Modo claro'}`
+                : `${t('darkMode') || 'Modo oscuro'}`
+              }
+            </button>
+          )}
         </div>
       </div>
     </header>

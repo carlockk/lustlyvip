@@ -28,7 +28,7 @@ export default function FeaturedGridLite() {
   }, []);
 
   if (!items.length) {
-    return <div className="text-white/70">No hay publicaciones destacadas todavía.</div>;
+    return <div className="text-slate-500 dark:text-white/70">No hay publicaciones destacadas todavía.</div>;
   }
 
   return (
@@ -39,7 +39,7 @@ export default function FeaturedGridLite() {
             <img src={p.coverUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-2 left-3 right-3">
-              <div className="text-sm text-white/80">@{p.handle}</div>
+              <div className="text-sm text-slate-500 dark:text-white/80">@{p.handle}</div>
               <div className="text-base font-semibold">{p.name}</div>
             </div>
           </div>
@@ -48,3 +48,4 @@ export default function FeaturedGridLite() {
     </div>
   );
 }
+

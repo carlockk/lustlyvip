@@ -28,11 +28,11 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
 
   if (loading) {
     return (
-      <aside className="hidden xl:block w-[500px] p-4 border-l border-gray-600">
-        <div className="h-6 mb-3 bg-gray-600/80 rounded w-40" />
+      <aside className="hidden xl:block w-[500px] p-4 border-l border-slate-200 dark:border-gray-700">
+        <div className="h-6 mb-3 bg-slate-200 dark:bg-gray-600/80 rounded w-40" />
         <div className="space-y-3">
-          <div className="h-[120px] rounded-2xl bg-gray-800/60" />
-          <div className="h-[120px] rounded-2xl bg-gray-800/60" />
+          <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
+          <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
         </div>
       </aside>
     );
@@ -41,8 +41,8 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
   if (!users.length) return null;
 
   return (
-    <aside className="hidden xl:block w-[360px] p-4 border-l border-gray-800">
-      <div className="text-xl font-bold text-gray-100 mb-3 leading-tight">
+    <aside className="hidden xl:block w-[360px] p-4 border-l border-slate-200 dark:border-gray-800">
+      <div className="text-xl font-bold text-slate-900 dark:text-gray-100 mb-3 leading-tight">
         {t('publicSuggestionsTitle') || 'Nuevos creadores'}
       </div>
 
@@ -57,7 +57,7 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
 
           return (
             <Link href={`/profile/${u._id}`} key={u._id} className="block group">
-              <div className="relative rounded-2xl overflow-hidden border border-gray-800 bg-black/70 dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative h-36 w-full">
                   <img src={cover} alt={`${handle} cover`} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-black/90" />
@@ -70,11 +70,11 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
                         className="w-16 h-16 rounded-full object-cover ring-2 ring-white/70"
                       />
                     </div>
-                    <div className="min-w-0 text-white">
+                    <div className="min-w-0 text-slate-900 dark:text-gray-100">
                       <div className="text-[15px] font-semibold leading-tight truncate group-hover:underline">
                         {display}
                       </div>
-                      <div className="text-gray-200/90 text-[12px] truncate">{handle}</div>
+                      <div className="text-slate-500 dark:text-gray-200/90 text-[12px] truncate">{handle}</div>
                     </div>
                   </div>
                 </div>
@@ -86,3 +86,5 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
     </aside>
   );
 }
+
+

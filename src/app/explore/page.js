@@ -77,9 +77,9 @@ export default function ExplorePage() {
               <Link
                 key={it.creator._id}
                 href={`/profile/${it.creator._id}`}
-                className="group relative block overflow-hidden rounded-3xl border border-gray-800 bg-gray-900/80 shadow-sm hover:shadow-xl transition-shadow"
+                className="group relative block overflow-hidden rounded-3xl border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900/80 shadow-sm hover:shadow-xl transition-shadow text-slate-900 dark:text-gray-100"
               >
-                <div className="relative h-36 w-full bg-gray-800">
+                <div className="relative h-36 w-full bg-slate-200 dark:bg-gray-800">
                   {cover ? (
                     <img src={cover} alt={`${username} cover`} className="w-full h-full object-cover" />
                   ) : null}
@@ -94,23 +94,23 @@ export default function ExplorePage() {
                       />
                     </div>
                     <div className="hidden sm:flex flex-col pb-3">
-                      <span className="text-white font-semibold text-lg leading-tight group-hover:text-pink-300 transition-colors">
+                      <span className="text-slate-900 dark:text-gray-100 font-semibold text-lg leading-tight transition-colors group-hover:text-teal-600 dark:group-hover:text-pink-300">
                         {username}
                       </span>
-                      <span className="text-sm text-gray-300">{handle}</span>
+                      <span className="text-sm text-slate-500 dark:text-gray-300">{handle}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-16 pb-6 px-5 space-y-3">
                   <div className="sm:hidden">
-                    <div className="text-white font-semibold text-base leading-tight">
+                    <div className="text-slate-900 dark:text-gray-100 font-semibold text-base leading-tight">
                       {username}
                     </div>
-                    <div className="text-sm text-gray-400">{handle}</div>
+                    <div className="text-sm text-slate-500 dark:text-gray-400">{handle}</div>
                   </div>
 
-                  <div className="flex items-center gap-4 text-xs text-gray-300">
+                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-gray-300">
                     <span className="flex items-center gap-1">
                       <FaHeart className="text-pink-500" />
                       {it.likes}
@@ -126,7 +126,7 @@ export default function ExplorePage() {
                   </div>
 
                   {it.latestPost?.createdAt && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-slate-500 dark:text-gray-400">
                       {`${lastPostLabel}: ${formatRelative(it.latestPost.createdAt)}`}
                     </div>
                   )}
@@ -139,3 +139,14 @@ export default function ExplorePage() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+

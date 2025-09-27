@@ -95,19 +95,19 @@ function MessagesInner() {
   }
 
   return (
-    <div className="flex h-full bg-gray-900 text-white">
-      <div className="w-1/4 bg-gray-800 p-4 border-r border-gray-700">
-        <h2 className="text-xl font-bold mb-4">{t("messagesTitleFull")}</h2>
+    <div className="flex h-full bg-slate-100 text-slate-900 dark:bg-gray-900 dark:text-gray-100">
+      <div className="w-1/4 bg-white dark:bg-gray-800 p-4 border-r border-slate-200 dark:border-gray-700">
+        <h2 className="text-xl font-bold mb-4 text-slate-900 dark:text-gray-100">{t("messagesTitleFull")}</h2>
         <div className="space-y-2">
           {conversations.length > 0 ? (
             conversations.map((conv) => (
               <div
                 key={conv.otherUser?._id}
                 onClick={() => setSelectedUser(conv.otherUser)}
-                className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+                className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors text-slate-900 dark:text-gray-100 ${
                   selectedUser?._id === conv.otherUser?._id
-                    ? "bg-pink-600"
-                    : "hover:bg-gray-700"
+                    ? "bg-pink-600 text-white shadow-sm"
+                    : "hover:bg-slate-200 dark:hover:bg-gray-700"
                 }`}
               >
                 <img
@@ -124,7 +124,7 @@ function MessagesInner() {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-sm">{t("noConversations")}</p>
+            <p className="text-sm text-slate-500 dark:text-gray-400">{t("noConversations")}</p>
           )}
         </div>
       </div>
@@ -132,7 +132,7 @@ function MessagesInner() {
       <div className="flex-1 flex flex-col">
         {selectedUser ? (
           <>
-            <div className="bg-gray-800 p-4 border-b border-gray-700 flex items-center">
+            <div className="bg-white dark:bg-gray-800 p-4 border-b border-slate-200 dark:border-gray-700 flex items-center">
               <Link href={`/profile/${selectedUser._id}`}>
                 <img
                   src={selectedUser.profilePicture || "/images/placeholder-avatar.png"}
@@ -140,7 +140,7 @@ function MessagesInner() {
                   className="w-10 h-10 rounded-full mr-4 object-cover cursor-pointer"
                 />
               </Link>
-              <h2 className="text-lg font-bold">{selectedUser.username}</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-gray-100">{selectedUser.username}</h2>
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((msg) => (
@@ -153,8 +153,8 @@ function MessagesInner() {
                   <div
                     className={`p-3 rounded-lg max-w-xs ${
                       msg.senderId === session.user.id
-                        ? "bg-pink-600 text-white"
-                        : "bg-gray-700 text-gray-2 00"
+                        ? "bg-pink-600 text-white shadow-sm"
+                        : "bg-slate-200 text-slate-900 dark:bg-gray-700 dark:text-gray-100"
                     }`}
                   >
                     <p>{msg.text}</p>
@@ -164,14 +164,14 @@ function MessagesInner() {
             </div>
             <form
               onSubmit={handleSendMessage}
-              className="bg-gray-800 p-4 flex items-center border-t border-gray-700"
+              className="bg-white dark:bg-gray-800 p-4 flex items-center border-t border-slate-200 dark:border-gray-700"
             >
               <input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder={t("writeMessagePlaceholder")}
-                className="flex-1 bg-gray-700 text-white border-none rounded-full px-4 py-2 focus:outline-none"
+                className="flex-1 bg-white text-slate-900 dark:bg-gray-700 dark:text-gray-100 border border-slate-200 dark:border-transparent rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500/60"
               />
               <button
                 type="submit"
@@ -182,7 +182,7 @@ function MessagesInner() {
             </form>
           </>
         ) : (
-          <div className="flex-1 flex justify-center items-center text-gray-400">
+          <div className="flex-1 flex justify-center items-center text-slate-500 dark:text-gray-400">
             {t("selectConversation")}
           </div>
         )}
@@ -198,3 +198,11 @@ export default function MessagesPage() {
     </Suspense>
   );
 }
+
+
+
+
+
+
+
+
