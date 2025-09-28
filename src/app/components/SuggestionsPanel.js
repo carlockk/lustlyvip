@@ -28,12 +28,13 @@ export default function SuggestionsPanel({ open, onClose }) {
       const data = await res.json();
       const users = data.users || [];
       setSuggestions(users);
-      // Auto-abrir si hay nuevas sugerencias no vistas
       try {
         const seen = JSON.parse(localStorage.getItem('suggestionsSeenIds') || '[]');
-        const newOnes = users.some(u => !seen.includes(u._id));
+        const newOnes = users.some((u) => !seen.includes(u._id));
         if (newOnes) setInternalOpen(true);
-      } catch {/* noop */}
+      } catch {
+        /* noop */
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -50,7 +51,6 @@ export default function SuggestionsPanel({ open, onClose }) {
     if (open !== undefined) setInternalOpen(open);
   }, [open]);
 
-  // cerrar al hacer click fuera
   useEffect(() => {
     const handler = (e) => {
       if (!effectiveOpen) return;
@@ -63,30 +63,26 @@ export default function SuggestionsPanel({ open, onClose }) {
   }, [effectiveOpen, onClose]);
 
   const handleClose = () => {
-    // Marcar como vistas las sugerencias actuales
     try {
-      const ids = suggestions.map(u => u._id);
+      const ids = suggestions.map((u) => u._id);
       localStorage.setItem('suggestionsSeenIds', JSON.stringify(ids));
-    } catch {/* noop */}
+    } catch {
+      /* noop */
+    }
     onClose ? onClose() : setInternalOpen(false);
   };
 
   return (
     <div className={`fixed inset-0 z-40 ${effectiveOpen ? '' : 'pointer-events-none'}`}>
-      {/* overlay */}
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity ${effectiveOpen ? 'opacity-100' : 'opacity-0'}`}
       />
-      {/* panel */}
       <div
         ref={panelRef}
         className={`panel-dark absolute top-0 right-0 h-full w-full max-w-md bg-gray-900 border-l border-gray-800 text-gray-100 transform transition-transform duration-300 ${effectiveOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-  <h3 className="text-xl font-bold leading-tight text-gray-100">
-    Nuevos creadores
-  </h3>
+          <h3 className="text-xl font-bold leading-tight text-gray-100">Nuevos creadores</h3>
           <button
             aria-label="Cerrar"
             onClick={handleClose}
@@ -96,7 +92,6 @@ export default function SuggestionsPanel({ open, onClose }) {
           </button>
         </div>
 
-        {/* contenido */}
         <div className="p-4 space-y-4 overflow-y-auto h-[calc(100%-56px)]">
           {loading && <div className="text-gray-400">Cargando…</div>}
           {error && <div className="text-red-400">{error}</div>}
@@ -112,20 +107,18 @@ export default function SuggestionsPanel({ open, onClose }) {
                 key={u._id}
                 className="rounded-xl overflow-hidden border border-gray-800 bg-gray-900/70 hover:bg-gray-800 transition-colors shadow-sm"
               >
-                {/* Cover grande: casi todo el ancho del panel */}
                 <div className="relative w-full aspect-[16/9]">
                   <Image
                     loader={cloudinaryLoader}
                     src={cover}
                     alt={`Portada de @${u.username}`}
                     fill
-                    sizes="384px"        // ~ max-w-md
+                    sizes="384px"
                     className="object-cover"
                     priority={false}
                   />
                 </div>
 
-                {/* Avatar grande superpuesto */}
                 <div className="px-4 -mt-8 flex items-center">
                   <div className="relative w-20 h-20 rounded-full ring-4 ring-gray-900 overflow-hidden shrink-0">
                     <Image
@@ -155,7 +148,6 @@ export default function SuggestionsPanel({ open, onClose }) {
                   </div>
                 </div>
 
-                {/* CTA */}
                 <div className="px-4 pt-3 pb-4">
                   <Link
                     href={`/profile/${u._id}`}
@@ -173,4 +165,3 @@ export default function SuggestionsPanel({ open, onClose }) {
     </div>
   );
 }
-

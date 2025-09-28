@@ -21,6 +21,56 @@ export default function ChatPanel() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [allowed, setAllowed] = useState(false);
+
+  const isCreator = session?.user?.role === 'creator';
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      if (!session) {
+        if (alive) {
+          setAllowed(false);
+        }
+        return;
+      }
+      try {
+        const res = await fetch('/api/subscriptions');
+        if (!res.ok) throw new Error('subscriptions fetch error');
+        const j = await res.json();
+        const statuses = new Set(['active', 'trialing', 'past_due']);
+        const list = Array.isArray(j.subscriptions) ? j.subscriptions : [];
+        const hasStripe = list.some((item) => statuses.has(item.status) && !!item.stripeSubscriptionId);
+        if (alive) setAllowed(hasStripe || isCreator);
+      } catch {
+        if (alive) setAllowed(isCreator);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [session, isCreator]);
+
+  useEffect(() => {
+    if (!open || allowed || !session) return;
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/subscriptions');
+        if (!res.ok) throw new Error('subscriptions fetch error');
+        const j = await res.json();
+        const statuses = new Set(['active', 'trialing', 'past_due']);
+        const list = Array.isArray(j.subscriptions) ? j.subscriptions : [];
+        const hasStripe = list.some((item) => statuses.has(item.status) && !!item.stripeSubscriptionId);
+        if (alive) setAllowed(hasStripe || isCreator);
+      } catch {
+        if (alive) setAllowed(isCreator);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [open, allowed, session, isCreator]);
 
   const loadConversations = useCallback(async () => {
     try {
@@ -61,12 +111,12 @@ export default function ChatPanel() {
   }, []);
 
   useEffect(() => {
-    if (open && session) loadConversations();
-  }, [open, session, loadConversations]);
+    if (open && session && allowed) loadConversations();
+  }, [open, session, allowed, loadConversations]);
 
   useEffect(() => {
-    if (selectedUser) loadMessages(selectedUser._id);
-  }, [selectedUser, loadMessages]);
+    if (selectedUser && allowed) loadMessages(selectedUser._id);
+  }, [selectedUser, allowed, loadMessages]);
 
   // Cerrar al hacer click fuera del panel
   useEffect(() => {
@@ -96,7 +146,7 @@ export default function ChatPanel() {
     } catch {}
   };
 
-  if (!session) return null;
+  if (!session || !allowed) return null;
 
   return (
     <>

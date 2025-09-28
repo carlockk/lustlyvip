@@ -23,7 +23,6 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
     setLoading(true);
     setUsedFallback(false);
     try {
-      // 1) Si hay sesión, intentar sugerencias autenticadas
       if (session?.user?.id) {
         const r = await fetch(`/api/suggestions`, { cache: 'no-store' });
         if (r.ok) {
@@ -35,7 +34,6 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
           }
         }
       }
-      // 2) Fallback a públicas
       const r2 = await fetch(`/api/suggestions/public?limit=${limit}`, { cache: 'no-store' });
       const j2 = await r2.json();
       setUsers(Array.isArray(j2?.users) ? j2.users : []);
@@ -49,39 +47,95 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
   };
 
   useEffect(() => {
-    if (status === 'loading') return; // esperamos a saber si hay sesión
+    if (status === 'loading') return;
     tryFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, session?.user?.id, limit]);
 
   const header = useMemo(() => {
-    if (usedFallback) return title; // públicas
-    return title; // puedes cambiarlo si quieres mostrar “Para ti”
+    if (usedFallback) return title;
+    return title;
   }, [title, usedFallback]);
 
-  return (
-    <aside className="hidden xl:block w-80 p-4 border-l border-slate-200 dark:border-gray-800">
-      <div className="text-base font-semibold text-slate-900 dark:text-gray-200 mb-3">{header}</div>
-
-      {/* Loading skeleton simple */}
-      {loading && (
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-32 rounded-2xl bg-gradient-to-b from-slate-200 to-slate-300 dark:from-gray-800 dark:to-gray-900/80 border border-slate-200 dark:border-gray-800 animate-pulse"
-            />
-          ))}
+  const renderMobile = () => {
+    if (loading) {
+      return (
+        <div className="xl:hidden mb-6 px-4">
+          <div className="h-4 w-32 bg-slate-200 dark:bg-gray-700/70 rounded mb-3" />
+          <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div key={index} className="w-[140px] h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60 animate-pulse" />
+            ))}
+          </div>
         </div>
-      )}
+      );
+    }
+    if (!users.length) return null;
 
-      {!loading && users.length === 0 && (
-        <div className="text-sm text-slate-500 dark:text-gray-400 bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-xl p-4">
-          {t('noSuggestionsYet') || 'Sin sugerencias por ahora.'}
+    return (
+      <div className="xl:hidden mb-6 px-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold text-[var(--foreground)] dark:text-gray-200">{header}</span>
         </div>
-      )}
+        <div
+          className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {users.map((u) => {
+            const avatar = u.profilePicture || '/images/placeholder-avatar.png';
+            const username = u.username || 'user';
+            const at = `@${username}`;
 
-      {!loading && users.length > 0 && (
+            return (
+              <Link
+                key={u._id}
+                href={`/profile/${u._id}`}
+                className="flex-shrink-0 w-[150px] snap-start rounded-2xl border border-gray-700/60 bg-gray-800/70 p-3 text-center hover:border-pink-500/60 transition-colors"
+              >
+                <div className="w-14 h-14 mx-auto rounded-full overflow-hidden mb-2">
+                  <img src={avatar} alt={username} className="w-full h-full object-cover" />
+                </div>
+                <div className="text-sm font-semibold text-gray-100 truncate">{username}</div>
+                <div className="text-[11px] text-gray-400 truncate">{at}</div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  const renderDesktop = () => {
+    if (loading) {
+      return (
+        <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+          <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-32 rounded-2xl bg-gradient-to-b from-slate-200 to-slate-300 dark:from-gray-800 dark:to-gray-900/80 border border-slate-200 dark:border-gray-800 animate-pulse"
+              />
+            ))}
+          </div>
+        </aside>
+      );
+    }
+
+    if (!users.length) {
+      return (
+        <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+          <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
+          <div className="text-sm text-slate-500 dark:text-gray-400 bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-xl p-4">
+            {t('noSuggestionsYet') || 'Sin sugerencias por ahora.'}
+          </div>
+        </aside>
+      );
+    }
+
+    return (
+      <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+        <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
         <div className="space-y-4">
           {users.map((u) => {
             const cover = u.coverPhoto || u.cover || '';
@@ -121,25 +175,14 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
             );
           })}
         </div>
-      )}
-    </aside>
+      </aside>
+    );
+  };
+
+  return (
+    <>
+      {renderMobile()}
+      {renderDesktop()}
+    </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

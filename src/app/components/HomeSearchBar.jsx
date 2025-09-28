@@ -70,8 +70,11 @@ export default function HomeSearchBar() {
   const hasResults = (results.creators?.length || 0) > 0 || (results.posts?.length || 0) > 0;
 
   return (
-    <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 shadow-sm">
-      <label htmlFor="home-search" className="block text-sm font-medium text-gray-300 mb-2">
+    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm text-gray-900 dark:bg-gray-900/60 dark:border-gray-800 dark:text-gray-100">
+      <label
+        htmlFor="home-search"
+        className="block text-sm font-medium text-gray-900 mb-2 dark:text-gray-300"
+      >
         {t('searchPostsOrCreatorsLabel') || 'Buscar publicaciones o creadores'}
       </label>
       <input

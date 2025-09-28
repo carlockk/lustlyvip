@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { FaImage, FaVideo } from 'react-icons/fa'; // Importamos los íconos
+import { FaImage } from 'react-icons/fa';
 
 export default function NewPost({ autoFocus = false, showHeader = true, className = '' }) {
   const { data: session } = useSession();
@@ -11,16 +11,18 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
   const [text, setText] = useState('');
   const [isExclusive, setIsExclusive] = useState(false);
   const [ppvEnabled, setPpvEnabled] = useState(false);
-  const [ppvPrice, setPpvPrice] = useState(''); // en unidades (p.ej. 5.00)
+  const [ppvPrice, setPpvPrice] = useState('');
   const [ppvCurrency, setPpvCurrency] = useState('usd');
-  const [media, setMedia] = useState(null); // Nuevo estado para el archivo
+  const [media, setMedia] = useState(null);
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const textareaRef = useRef(null);
 
   useEffect(() => {
     if (autoFocus) {
-      setTimeout(() => { try { textareaRef.current?.focus(); } catch {} }, 0);
+      setTimeout(() => {
+        try { textareaRef.current?.focus(); } catch {}
+      }, 0);
     }
   }, [autoFocus]);
 
@@ -42,12 +44,10 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
     }
 
     try {
-      // Usamos FormData para enviar archivos
       const formData = new FormData();
       formData.append('text', text);
       formData.append('isExclusive', isExclusive);
       formData.append('ppvEnabled', ppvEnabled && isExclusive);
-      // Convertimos precio a centavos si aplica
       if (ppvEnabled && isExclusive) {
         const cents = Math.round(parseFloat(ppvPrice || '0') * 100);
         if (!Number.isFinite(cents) || cents <= 0) {
@@ -64,7 +64,7 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
 
       const res = await fetch('/api/posts', {
         method: 'POST',
-        body: formData, // Enviamos el FormData
+        body: formData,
       });
 
       const data = await res.json();
@@ -76,7 +76,7 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
         setPpvEnabled(false);
         setPpvPrice('');
         setPpvCurrency('usd');
-        setMedia(null); // Reseteamos el estado del archivo
+        setMedia(null);
         router.refresh();
       } else {
         setMessage(data.message || 'Error al crear la publicación.');
@@ -90,18 +90,17 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
   };
 
   const handleFileChange = (e) => {
-    // Solo permitimos un archivo a la vez
     const file = e.target.files[0];
     if (file) {
-      // Puedes agregar validaciones de tamaño y tipo aquí
       setMedia(file);
     }
   };
 
   const canPublish = Boolean(text.trim()) || Boolean(media);
-  const baseClasses = 'bg-gray-800 p-6 rounded-lg shadow-lg w-full mb-8';
-  const defaultWidth = className && className.includes('max-w-') ? '' : 'max-w-2xl mx-auto';
-  const containerClass = [baseClasses, defaultWidth, className].filter(Boolean).join(' ');
+  const containerClass = [
+    'bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl mx-auto mb-8',
+    className,
+  ].filter(Boolean).join(' ');
 
   return (
     <div className={containerClass}>
@@ -113,19 +112,20 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
           placeholder="Escribe tu nueva publicación..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          required={!media} // Requerido si no hay archivo
+          required={!media}
         />
-        
-        {/* Vista previa del archivo */}
+
         {media && (
           <div className="mb-4 text-gray-400">
             Archivo seleccionado: {media.name}
           </div>
         )}
 
-        {/* Botones para subir archivos */}
         <div className="flex items-center space-x-4 mb-4">
-          <label htmlFor="file-upload" className="flex items-center px-4 py-2 bg-gray-700 text-gray-300 rounded-full cursor-pointer hover:bg-gray-600 transition-colors">
+          <label
+            htmlFor="file-upload"
+            className="flex items-center px-4 py-2 bg-gray-700 text-gray-300 rounded-full cursor-pointer hover:bg-gray-600 transition-colors"
+          >
             <FaImage className="mr-2" />
             Foto/Video
           </label>
@@ -138,7 +138,6 @@ export default function NewPost({ autoFocus = false, showHeader = true, classNam
           />
         </div>
 
-        {/* Checkbox para publicaciones exclusivas */}
         <div className="flex items-center mb-4">
           <input
             id="exclusive"

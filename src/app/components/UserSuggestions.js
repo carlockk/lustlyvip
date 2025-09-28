@@ -35,7 +35,7 @@ export default function UserSuggestions() {
 
   if (loading) {
     return (
-      <aside className="hidden xl:block w-[320px] p-4 border-l border-slate-200 dark:border-gray-800">
+      <aside className="hidden xl:block w-[320px] p-4 border-l border-gray-200 dark:border-gray-800">
         <div className="h-6 mb-3 bg-slate-200 dark:bg-gray-800/80 rounded w-40" />
         <div className="space-y-3">
           <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
@@ -49,10 +49,10 @@ export default function UserSuggestions() {
   if (!suggestions.length) return null;
 
   return (
-    <aside className="hidden xl:block w-[360px] p-4 border-l border-slate-200 dark:border-gray-800">
-  <div className="text-xl font-bold text-slate-900 dark:text-gray-100 mb-3 leading-tight">
-    Nuevos creadores
-  </div>
+    <aside className="hidden xl:block w-[360px] p-4 border-l border-gray-200 dark:border-gray-800">
+      <div className="text-xl font-bold text-[var(--foreground)] dark:text-gray-100 mb-3 leading-tight">
+        Nuevos creadores
+      </div>
 
       <div className="space-y-3">
         {suggestions.map((u) => {
