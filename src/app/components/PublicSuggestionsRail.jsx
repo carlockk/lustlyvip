@@ -33,7 +33,7 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
           <div className="h-4 w-32 bg-slate-200 dark:bg-gray-700/70 rounded mb-3" />
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="w-[140px] h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60 animate-pulse" />
+              <div key={index} className="w-[170px] h-[120px] rounded-xl bg-slate-200 dark:bg-gray-800/60 animate-pulse" />
             ))}
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="flex-shrink-0 w-[150px] snap-start rounded-2xl border border-gray-700/60 bg-gray-800/70 p-3 text-center hover:border-pink-500/60 transition-colors"
+                className="flex-shrink-0 w-[180px] snap-start rounded-xl border border-gray-700/60 bg-gray-800/70 p-3 text-center hover:border-pink-500/60 transition-colors"
               >
                 <div className="w-14 h-14 mx-auto rounded-full overflow-hidden mb-2">
                   <img src={avatar} alt={username} className="w-full h-full object-cover" />
@@ -74,7 +74,7 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
   const renderDesktop = () => {
     if (loading) {
       return (
-        <aside className="hidden xl:block w-[500px] p-4 border-l border-gray-200 dark:border-gray-700">
+        <aside className="hidden xl:block w-[540px] p-4 border-l border-gray-200 dark:border-gray-700">
           <div className="h-6 mb-3 bg-slate-200 dark:bg-gray-600/80 rounded w-40" />
           <div className="space-y-3">
             <div className="h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60" />
@@ -87,7 +87,7 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
     if (!users.length) return null;
 
     return (
-      <aside className="hidden xl:block w-[360px] p-4 border-l border-gray-200 dark:border-gray-800">
+      <aside className="hidden xl:block w-[420px] p-4 border-l border-gray-200 dark:border-gray-800">
         <div className="text-xl font-bold text-[var(--foreground)] dark:text-gray-100 mb-3 leading-tight">
           {t('publicSuggestionsTitle') || 'Nuevos creadores'}
         </div>
@@ -103,10 +103,10 @@ export default function PublicSuggestionsRail({ limit = 8 }) {
 
             return (
               <Link href={`/profile/${u._id}`} key={u._id} className="block group">
-                <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="relative h-36 w-full">
-                    <img src={cover} alt={`${handle} cover`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-black/90" />
+              <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-shadow">
+                <div className="relative h-36 w-full">
+                  <img src={cover} alt={`${handle} cover`} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/55 to-black/90" />
 
                     <div className="absolute left-4 right-4 bottom-4 flex items-center gap-3">
                       <div className="rounded-full p-1 bg-black/30 backdrop-blur-sm">

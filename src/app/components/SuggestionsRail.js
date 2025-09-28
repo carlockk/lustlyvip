@@ -64,7 +64,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
           <div className="h-4 w-32 bg-slate-200 dark:bg-gray-700/70 rounded mb-3" />
           <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {Array.from({ length: 3 }).map((_, index) => (
-              <div key={index} className="w-[140px] h-[120px] rounded-2xl bg-slate-200 dark:bg-gray-800/60 animate-pulse" />
+              <div key={index} className="w-[170px] h-[120px] rounded-xl bg-slate-200 dark:bg-gray-800/60 animate-pulse" />
             ))}
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="flex-shrink-0 w-[150px] snap-start rounded-2xl border border-gray-700/60 bg-gray-800/70 p-3 text-center hover:border-pink-500/60 transition-colors"
+                className="flex-shrink-0 w-[180px] snap-start rounded-xl border border-gray-700/60 bg-gray-800/70 p-3 text-center hover:border-pink-500/60 transition-colors"
               >
                 <div className="w-14 h-14 mx-auto rounded-full overflow-hidden mb-2">
                   <img src={avatar} alt={username} className="w-full h-full object-cover" />
@@ -108,7 +108,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
   const renderDesktop = () => {
     if (loading) {
       return (
-        <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+        <aside className="hidden xl:block w-96 p-4 border-l border-gray-200 dark:border-gray-800">
           <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -124,7 +124,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
 
     if (!users.length) {
       return (
-        <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+        <aside className="hidden xl:block w-96 p-4 border-l border-gray-200 dark:border-gray-800">
           <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
           <div className="text-sm text-slate-500 dark:text-gray-400 bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-gray-800 rounded-xl p-4">
             {t('noSuggestionsYet') || 'Sin sugerencias por ahora.'}
@@ -134,7 +134,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
     }
 
     return (
-      <aside className="hidden xl:block w-80 p-4 border-l border-gray-200 dark:border-gray-800">
+      <aside className="hidden xl:block w-96 p-4 border-l border-gray-200 dark:border-gray-800">
         <div className="text-base font-semibold text-[var(--foreground)] dark:text-gray-200 mb-3">{header}</div>
         <div className="space-y-4">
           {users.map((u) => {
@@ -147,7 +147,7 @@ export default function SuggestionsRail({ limit = 6, title = 'Nuevos creadores' 
               <Link
                 key={u._id}
                 href={`/profile/${u._id}`}
-                className="block group rounded-3xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                className="block group rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900/80 shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
               >
                 <div className="relative h-36 w-full bg-slate-200 dark:bg-gray-800">
                   {cover ? (
